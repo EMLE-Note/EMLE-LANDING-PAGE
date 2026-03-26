@@ -10,8 +10,26 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/google-fonts'
+    '@nuxtjs/google-fonts',
+    '@nuxtjs/i18n'
   ],
+
+  i18n: {
+    locales: [
+      { code: 'en', iso: 'en-US', dir: 'ltr', file: 'en.json' },
+      { code: 'ar', iso: 'ar-EG', dir: 'rtl', file: 'ar.json' }
+    ],
+    defaultLocale: 'ar',
+    strategy: 'prefix_except_default',
+    lazy: false,
+    langDir: 'locales',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+    }
+  },
+
   googleFonts: {
     families: {
       Cairo: [300, 400, 500, 600, 700, 800],

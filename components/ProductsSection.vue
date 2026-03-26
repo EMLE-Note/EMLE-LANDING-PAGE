@@ -2,10 +2,10 @@
   <section id="products" class="py-24 bg-white dark:bg-zinc-950">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-20">
-        <h2 class="font-bold tracking-wide uppercase text-sm mb-3" style="color: #00adee;">النظام البيئي</h2>
-        <h3 class="text-3xl font-extrabold text-zinc-900 dark:text-white sm:text-4xl">منظومة منتجات متكاملة</h3>
+        <h2 class="font-bold tracking-wide uppercase text-sm mb-3" style="color: #00adee;">{{ $t('products.subtitle') }}</h2>
+        <h3 class="text-3xl font-extrabold text-zinc-900 dark:text-white sm:text-4xl">{{ $t('products.title') }}</h3>
         <p class="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-          تم بناء المنظومة لتعمل بشكل تكاملي؛ حيث تعزز كل ركيزة الركائز الأخرى، مما يرفع من القيمة التراكمية ويزيد من معدل احتفاظ المستخدمين.
+          {{ $t('products.desc') }}
         </p>
       </div>
 
@@ -22,19 +22,19 @@
               <div class="w-14 h-14 rounded-xl flex items-center justify-center shadow-inner" style="background: rgba(0,173,238,0.08);">
                 <UIcon :name="product.icon" class="w-7 h-7" style="color: #00adee;" />
               </div>
-              <UBadge :color="product.status === 'منتج فعّال' ? 'emerald' : 'amber'" variant="subtle" size="sm">
-                {{ product.status }}
+              <UBadge :color="product.isActive ? 'emerald' : 'amber'" variant="subtle" size="sm">
+                {{ product.isActive ? $t('products.status_active') : $t('products.status_dev') }}
               </UBadge>
             </div>
-            <h4 class="text-xl font-bold text-zinc-900 dark:text-white mt-5">{{ product.name }}</h4>
+            <h4 class="text-xl font-bold text-zinc-900 dark:text-white mt-5">{{ $t(product.nameKey) }}</h4>
           </template>
           
-          <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">{{ product.desc }}</p>
+          <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">{{ $t(product.descKey) }}</p>
           
           <template #footer>
-            <UButton variant="link" color="primary" :padded="false" class="font-medium group">
-              اكتشف المزيد
-              <UIcon name="i-heroicons-arrow-left" class="mr-1 w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <UButton variant="link" color="primary" :padded="false" class="font-medium group flex items-center gap-1">
+              {{ $t('products.explore_more') }}
+              <UIcon name="i-heroicons-arrow-left" class="rtl:rotate-0 ltr:-rotate-180 group-hover:rtl:-translate-x-1 group-hover:ltr:translate-x-1 transition-transform" />
             </UButton>
           </template>
         </UCard>
@@ -45,11 +45,11 @@
 
 <script setup>
 const products = [
-  { name: 'تطبيق إيملي الأساسي', status: 'منتج فعّال', desc: 'تجربة تعلم وتقييم موحدة تجمع كافة الموارد في واجهة مستخدم واحدة مخصصة للتفاعل اليومي.', icon: 'i-heroicons-device-phone-mobile' },
-  { name: 'الدورات الطبية المصورة', status: 'منتج فعّال', desc: 'فيديوهات طبية عالية الجودة تحت إشراف نخبة من الأساتذة، مقسمة لوحدات تعليمية دقيقة.', icon: 'i-heroicons-film' },
-  { name: 'الكتب الطبية المتكاملة', status: 'منتج فعّال', desc: 'نظام قراءة إلكترونية متقدم مدعوم بالخرائط الذهنية التفاعلية لتسهيل استرجاع المعلومات.', icon: 'i-heroicons-book-open' },
-  { name: 'بنك الأسئلة الذكي', status: 'منتج فعّال', desc: 'بنوك أسئلة تغطي البكالوريوس والزمالة، مزودة بنظام تحليل أداء دقيق يعزز الاستخدام المتكرر.', icon: 'i-heroicons-question-mark-circle' },
-  { name: 'المجتمع الطبي المهني', status: 'منتج فعّال', desc: 'منصة تعلم اجتماعي تربط الأطباء والمؤسسات، وتسهل تتبع نقاط التطوير المهني (CPD).', icon: 'i-heroicons-user-group' },
-  { name: 'المريض الافتراضي', status: 'قيد التطوير', desc: 'محاكاة تفاعلية واقعية باستخدام الذكاء الاصطناعي لتدريب الأطباء في بيئة سريرية آمنة وموجهة.', icon: 'i-heroicons-face-smile' },
+  { nameKey: 'products.p1_title', isActive: true, descKey: 'products.p1_desc', icon: 'i-heroicons-device-phone-mobile' },
+  { nameKey: 'products.p2_title', isActive: true, descKey: 'products.p2_desc', icon: 'i-heroicons-film' },
+  { nameKey: 'products.p3_title', isActive: true, descKey: 'products.p3_desc', icon: 'i-heroicons-book-open' },
+  { nameKey: 'products.p4_title', isActive: true, descKey: 'products.p4_desc', icon: 'i-heroicons-question-mark-circle' },
+  { nameKey: 'products.p5_title', isActive: true, descKey: 'products.p5_desc', icon: 'i-heroicons-user-group' },
+  { nameKey: 'products.p6_title', isActive: false, descKey: 'products.p6_desc', icon: 'i-heroicons-face-smile' },
 ]
 </script>

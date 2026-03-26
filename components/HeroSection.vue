@@ -13,26 +13,27 @@
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
       <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-        <div class="relative rounded-full px-4 py-1.5 text-sm font-medium leading-6 text-brand-600 dark:text-brand-400 ring-1 ring-zinc-300 dark:ring-zinc-700 hover:ring-brand-400 transition-all bg-white/60 dark:bg-zinc-900/50 backdrop-blur-sm cursor-pointer">
-          تعرف على قدرات الذكاء الاصطناعي الجديدة <span aria-hidden="true" class="mr-1">&larr;</span>
+        <div class="flex items-center gap-2 relative rounded-full px-4 py-1.5 text-sm font-medium leading-6 text-brand-600 dark:text-brand-400 ring-1 ring-zinc-300 dark:ring-zinc-700 hover:ring-brand-400 transition-all bg-white/60 dark:bg-zinc-900/50 backdrop-blur-sm cursor-pointer">
+          {{ $t('hero.badge') }}
+          <UIcon name="i-heroicons-arrow-left" class="rtl:rotate-0 ltr:rotate-180" />
         </div>
       </div>
       
       <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-6xl max-w-4xl mx-auto leading-tight">
-        بنية تعليمية طبية رقمية متكاملة بـ <span class="gradient-text">الذكاء الاصطناعي</span>
+        {{ $t('hero.title_part1') }} <span class="gradient-text">{{ $t('hero.title_highlight') }}</span>
       </h1>
       
       <p class="mt-6 text-lg leading-8 text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-        منصة مخصصة لتأهيل وتقييم الأطباء، تجمع بين التعلم، التقييم، والذكاء الاصطناعي لتوفير رحلة متكاملة من الدراسة الجامعية إلى التعليم الطبي المستمر.
+        {{ $t('hero.desc') }}
       </p>
       
-      <div class="mt-10 flex items-center justify-center space-x-6 space-x-reverse">
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
         <UButton size="xl" color="primary" variant="solid" class="text-base px-8 py-3 transform hover:scale-105 transition-transform" style="background-color: #00adee; color: white;">
-          ابدأ مجاناً
+          {{ $t('common.start_free') }}
         </UButton>
-        <UButton size="xl" color="gray" variant="ghost" class="text-base px-8 py-3 group">
-          استكشف المنتجات
-          <UIcon name="i-heroicons-arrow-left" class="mr-2 group-hover:-translate-x-1 transition-transform" />
+        <UButton size="xl" color="gray" variant="ghost" class="text-base px-8 py-3 group flex items-center gap-2">
+          {{ $t('common.explore_products') }}
+          <UIcon name="i-heroicons-arrow-left" class="rtl:rotate-0 ltr:-rotate-180 group-hover:rtl:-translate-x-1 group-hover:ltr:translate-x-1 transition-transform" />
         </UButton>
       </div>
       

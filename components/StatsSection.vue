@@ -18,7 +18,7 @@
               <span class="tabular-nums font-bold" style="font-feature-settings: 'tnum';">{{ displayedStats[idx].toLocaleString('en-US') }}</span>
               <span v-if="stat.suffix" class="text-3xl text-[#00adee] mr-1">{{ stat.suffix }}</span>
             </div>
-            <span class="text-sm md:text-base font-bold text-zinc-500 dark:text-zinc-400 tracking-wide text-center uppercase group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300">{{ stat.label }}</span>
+            <span class="text-sm md:text-base font-bold text-zinc-500 dark:text-zinc-400 tracking-wide text-center uppercase group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300">{{ $t(stat.key) }}</span>
           </div>
         </div>
       </div>
@@ -30,10 +30,10 @@
 import { ref, onMounted } from 'vue';
 
 const stats = [
-  { value: 30000, prefix: '+', suffix: '', label: 'طبيب مسجل' },
-  { value: 1000000, prefix: '+', suffix: '', label: 'ساعة تعلم سنويًا' },
-  { value: 6, prefix: '', suffix: '', label: 'منتجات متكاملة' },
-  { value: 70, prefix: '', suffix: '%', label: 'خفض بالتكاليف' }
+  { value: 30000, prefix: '+', suffix: '', key: 'stats.doctors' },
+  { value: 1000000, prefix: '+', suffix: '', key: 'stats.hours' },
+  { value: 6, prefix: '', suffix: '', key: 'stats.products' },
+  { value: 70, prefix: '', suffix: '%', key: 'stats.cost_reduction' }
 ];
 
 const displayedStats = ref(stats.map(() => 0));
@@ -54,10 +54,11 @@ onMounted(() => {
 
 function animateValues() {
   const duration = 2500; // 2.5 seconds
-  const startTime = performance.now();
+  let startTimestamp = null;
   
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
+  function update(timestamp) {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const elapsed = timestamp - startTimestamp;
     const progress = Math.min(elapsed / duration, 1);
     
     // Ease out quart (smooth deceleration)

@@ -11,13 +11,13 @@
         <div class="absolute -right-10 -top-10 w-40 h-40 opacity-5 blur-3xl rounded-full group-hover:opacity-10 transition-opacity" style="background: #00adee;"></div>
         <div class="absolute -left-10 -bottom-10 w-40 h-40 opacity-5 blur-3xl rounded-full group-hover:opacity-10 transition-opacity" style="background: #008bbe;"></div>
         
-        <div class="mb-6 md:mb-0 relative z-10 text-center md:text-right">
-          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">مستعد للارتقاء بتجربتك التعليمية؟</h3>
-          <p class="text-zinc-600 dark:text-zinc-400">انضم إلى آلاف الأطباء الذين يثقون في إيملي نوتس يومياً.</p>
+        <div class="mb-6 md:mb-0 relative z-10 text-center md:rtl:text-right md:ltr:text-left">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">{{ $t('footer.cta_title') }}</h3>
+          <p class="text-zinc-600 dark:text-zinc-400">{{ $t('footer.cta_subtitle') }}</p>
         </div>
         <div class="relative z-10">
           <UButton size="xl" color="primary" variant="solid" class="px-8 font-bold shadow-lg shadow-[#00adee]/20 hover:scale-105 transition-transform" style="background-color: #00adee; color: white;">
-            ابدأ رحلتك مجاناً
+            {{ $t('footer.cta_button') }}
           </UButton>
         </div>
       </div>
@@ -27,17 +27,17 @@
         
         <!-- Brand & Description -->
         <div class="md:col-span-12 lg:col-span-4">
-          <a href="#" class="inline-flex items-center gap-2 mb-6 group">
+          <NuxtLink :to="localePath('/')" class="inline-flex items-center gap-2 mb-6 group">
             <!-- Light Mode Logo -->
             <img src="~/assets/logo emli light.png" alt="Emily Notes" class="h-10 w-auto block dark:hidden group-hover:scale-105 transition-transform duration-300" />
             <!-- Dark Mode Logo -->
             <img src="~/assets/logo emli DARK.png" alt="Emily Notes" class="h-10 w-auto hidden dark:block group-hover:scale-105 transition-transform duration-300" />
-          </a>
+          </NuxtLink>
           <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6 lg:max-w-sm">
-            المنصة الرائدة في التقييم والتعليم الطبي في العالم العربي. نحن نعيد تشكيل مستقبل التطور المهني للأطباء عبر دمج أحدث تقنيات الذكاء الاصطناعي بالمنهجيات الطبية المعتمدة.
+            {{ $t('footer.desc') }}
           </p>
           <!-- Social Icons -->
-          <div class="flex space-x-3 space-x-reverse">
+          <div class="flex space-x-3 space-x-reverse rtl:space-x-reverse ltr:space-x-0 gap-3">
             <a href="#" class="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-[#00adee] transition-all duration-300">
               <UIcon name="i-heroicons-globe-alt" class="w-5 h-5" />
             </a>
@@ -55,34 +55,34 @@
         
         <!-- Navigation Links -->
         <div class="md:col-span-4 lg:col-span-2 lg:col-start-6">
-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">المنصة</h3>
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">{{ $t('footer.platform') }}</h3>
           <ul class="space-y-4">
-            <li><a href="#products" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>منتجاتنا</a></li>
-            <li><a href="#ai" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>الذكاء الاصطناعي</a></li>
-            <li><a href="#roadmap" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>الرؤية المستقبلية</a></li>
+            <li><a href="#products" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.platform_products') }}</a></li>
+            <li><a href="#ai" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.platform_ai') }}</a></li>
+            <li><a href="#roadmap" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.platform_roadmap') }}</a></li>
           </ul>
         </div>
         
         <!-- Legal Links -->
         <div class="md:col-span-4 lg:col-span-2">
-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">قانوني</h3>
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">{{ $t('footer.legal') }}</h3>
           <ul class="space-y-4">
-            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>الشروط والأحكام</a></li>
-            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>سياسة الخصوصية</a></li>
-            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 ml-2 group-hover:bg-[#00adee] transition-colors"></span>اتصل بنا</a></li>
+            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.legal_terms') }}</a></li>
+            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.legal_privacy') }}</a></li>
+            <li><a href="#" class="text-zinc-600 dark:text-zinc-400 hover:text-[#00adee] transition-colors flex items-center group"><span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 rtl:ml-2 ltr:mr-2 group-hover:bg-[#00adee] transition-colors"></span>{{ $t('footer.legal_contact') }}</a></li>
           </ul>
         </div>
 
         <!-- Newsletter -->
         <div class="md:col-span-4 lg:col-span-3">
-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">النشرة الطبية</h3>
-          <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">اشترك ليصلك آخر التحديثات والأخبار حول إيملي نوتس والإضافات التعليمية الجديدة.</p>
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-5">{{ $t('footer.newsletter') }}</h3>
+          <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">{{ $t('footer.newsletter_desc') }}</p>
           <form class="flex" @submit.prevent>
             <div class="relative w-full">
-              <input type="email" placeholder="البريد الإلكتروني" class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-r-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:border-transparent transition-all" style="--tw-ring-color: #00adee;" />
+              <input type="email" :placeholder="$t('footer.newsletter_placeholder')" class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rtl:rounded-r-lg ltr:rounded-l-lg rtl:rounded-l-none ltr:rounded-r-none px-4 py-2.5 focus:outline-none focus:ring-1 focus:border-transparent transition-all" style="--tw-ring-color: #00adee;" />
             </div>
-            <button type="submit" class="rounded-l-lg px-6 font-semibold text-white transition-opacity hover:opacity-90 flex-shrink-0" style="background-color: #00adee;">
-              اشترك
+            <button type="submit" class="rtl:rounded-l-lg ltr:rounded-r-lg rtl:rounded-r-none ltr:rounded-l-none px-6 font-semibold text-white transition-opacity hover:opacity-90 flex-shrink-0" style="background-color: #00adee;">
+              {{ $t('footer.newsletter_button') }}
             </button>
           </form>
         </div>
@@ -92,10 +92,10 @@
       <!-- Bottom Bar -->
       <div class="pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
         <p class="text-zinc-500 text-sm">
-          &copy; {{ new Date().getFullYear() }} إيملي نوتس (EMLE Notes). جميع الحقوق محفوظة.
+          &copy; {{ new Date().getFullYear() }} {{ $t('footer.copy') }}
         </p>
-        <div class="flex items-center space-x-2 space-x-reverse text-sm text-zinc-500">
-          <span>صُنع بشغف لتمكين الأطباء</span>
+        <div class="flex items-center gap-2 text-sm text-zinc-500">
+          <span>{{ $t('footer.made_with_passion') }}</span>
           <UIcon name="i-heroicons-heart-solid" class="w-4 h-4 text-red-500 animate-pulse" />
         </div>
       </div>
@@ -103,3 +103,7 @@
     </div>
   </footer>
 </template>
+
+<script setup>
+const localePath = useLocalePath()
+</script>
