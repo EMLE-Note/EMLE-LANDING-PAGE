@@ -28,7 +28,7 @@
         <!-- Brand & Description -->
         <div class="md:col-span-12 lg:col-span-4">
           <NuxtLink to="/" class="inline-flex items-center mb-6">
-            <img src="~/assets/logo emli .png" alt="EMLE Notes" class="h-10 w-auto" />
+            <EmleLogo class="w-32 sm:w-40" />
           </NuxtLink>
           <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6 lg:max-w-sm">
             المنصة الرائدة في التقييم والتعليم الطبي في العالم العربي. نحن نعيد تشكيل مستقبل التطور المهني للأطباء عبر دمج أحدث تقنيات الذكاء الاصطناعي بالمنهجيات الطبية المعتمدة.

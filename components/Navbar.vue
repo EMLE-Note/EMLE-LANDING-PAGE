@@ -5,7 +5,7 @@
         <!-- Logo -->
         <div class="flex-shrink-0 flex items-center">
           <NuxtLink to="/" class="flex items-center">
-            <img src="~/assets/logo emli .png" alt="EMLE Notes" class="h-10 w-auto" />
+            <EmleLogo class="w-28 sm:w-36" />
           </NuxtLink>
         </div>
 
