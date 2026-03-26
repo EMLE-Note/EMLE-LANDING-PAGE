@@ -27,9 +27,12 @@
         
         <!-- Brand & Description -->
         <div class="md:col-span-12 lg:col-span-4">
-          <NuxtLink to="/" class="inline-flex items-center mb-6">
-            <EmleLogo class="w-32 sm:w-40" />
-          </NuxtLink>
+          <a href="#" class="inline-flex items-center gap-2 mb-6 group">
+            <!-- Light Mode Logo -->
+            <img src="~/assets/logo emli light.png" alt="Emily Notes" class="h-10 w-auto block dark:hidden group-hover:scale-105 transition-transform duration-300" />
+            <!-- Dark Mode Logo -->
+            <img src="~/assets/logo emli DARK.png" alt="Emily Notes" class="h-10 w-auto hidden dark:block group-hover:scale-105 transition-transform duration-300" />
+          </a>
           <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6 lg:max-w-sm">
             المنصة الرائدة في التقييم والتعليم الطبي في العالم العربي. نحن نعيد تشكيل مستقبل التطور المهني للأطباء عبر دمج أحدث تقنيات الذكاء الاصطناعي بالمنهجيات الطبية المعتمدة.
           </p>

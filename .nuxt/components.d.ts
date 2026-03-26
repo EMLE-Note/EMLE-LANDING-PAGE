@@ -16,7 +16,6 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 
 export const AISection: typeof import("../components/AISection.vue")['default']
 export const BusinessSection: typeof import("../components/BusinessSection.vue")['default']
-export const EmleLogo: typeof import("../components/EmleLogo.vue")['default']
 export const FooterSection: typeof import("../components/FooterSection.vue")['default']
 export const HeroSection: typeof import("../components/HeroSection.vue")['default']
 export const Navbar: typeof import("../components/Navbar.vue")['default']
@@ -102,7 +101,6 @@ export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const LazyAISection: LazyComponent<typeof import("../components/AISection.vue")['default']>
 export const LazyBusinessSection: LazyComponent<typeof import("../components/BusinessSection.vue")['default']>
-export const LazyEmleLogo: LazyComponent<typeof import("../components/EmleLogo.vue")['default']>
 export const LazyFooterSection: LazyComponent<typeof import("../components/FooterSection.vue")['default']>
 export const LazyHeroSection: LazyComponent<typeof import("../components/HeroSection.vue")['default']>
 export const LazyNavbar: LazyComponent<typeof import("../components/Navbar.vue")['default']>

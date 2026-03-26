@@ -3,13 +3,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
-        <div class="flex-shrink-0 flex items-center">
-          <NuxtLink to="/" class="flex items-center">
-            <EmleLogo class="w-28 sm:w-36" />
-          </NuxtLink>
-        </div>
-
-        <!-- Desktop Nav -->
+      <div class="flex-shrink-0 flex items-center ml-8">
+        <a href="#" class="text-2xl font-black tracking-tight flex items-center gap-2 group">
+          <!-- Light Mode Logo -->
+          <img src="~/assets/logo emli light.png" alt="Emily Notes" class="h-10 w-auto block dark:hidden group-hover:scale-105 transition-transform duration-300" />
+          <!-- Dark Mode Logo -->
+          <img src="~/assets/logo emli DARK.png" alt="Emily Notes" class="h-10 w-auto hidden dark:block group-hover:scale-105 transition-transform duration-300" />
+        </a>
+      </div>   <!-- Desktop Nav -->
         <nav class="hidden md:flex space-x-8 space-x-reverse relative">
           <a href="#problem" class="text-zinc-700 hover:text-brand-500 dark:text-zinc-300 dark:hover:text-brand-400 font-medium transition-colors">المشكلة</a>
           <a href="#products" class="text-zinc-700 hover:text-brand-500 dark:text-zinc-300 dark:hover:text-brand-400 font-medium transition-colors">منتجاتنا</a>
