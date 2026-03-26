@@ -27,7 +27,7 @@
       </p>
       
       <div class="mt-10 flex items-center justify-center space-x-6 space-x-reverse">
-        <UButton size="xl" color="primary" variant="solid" class="text-base px-8 py-3 transform hover:scale-105 transition-transform">
+        <UButton size="xl" color="primary" variant="solid" class="text-base px-8 py-3 transform hover:scale-105 transition-transform" style="background-color: #00adee; color: white;">
           ابدأ مجاناً
         </UButton>
         <UButton size="xl" color="gray" variant="ghost" class="text-base px-8 py-3 group">
@@ -36,27 +36,11 @@
         </UButton>
       </div>
       
-      <!-- Stats -->
-      <div class="mt-20 pt-10 border-t border-zinc-200 dark:border-zinc-800">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div class="flex flex-col items-center">
-            <span class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">+30,000</span>
-            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400 tracking-wider">طبيب مسجل</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <span class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">+1,000,000</span>
-            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400 tracking-wider">ساعة تعلم سنويًا</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <span class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">6</span>
-            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400 tracking-wider">منتجات متكاملة</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <span class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">70%</span>
-            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400 tracking-wider">خفض بالتكاليف</span>
-          </div>
-        </div>
-      </div>
+    </div>
+    
+    <!-- Render injected components (e.g. StatsSection) inside the shared background -->
+    <div class="relative z-20 mt-16 sm:mt-24">
+      <slot />
     </div>
   </section>
 </template>

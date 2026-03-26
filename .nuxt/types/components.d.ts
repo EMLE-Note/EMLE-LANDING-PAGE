@@ -23,6 +23,7 @@ interface _GlobalComponents {
   ProductsSection: typeof import("../../components/ProductsSection.vue")['default']
   RoadmapSection: typeof import("../../components/RoadmapSection.vue")['default']
   SolutionSection: typeof import("../../components/SolutionSection.vue")['default']
+  StatsSection: typeof import("../../components/StatsSection.vue")['default']
   TractionSection: typeof import("../../components/TractionSection.vue")['default']
   UAccordion: typeof import("../../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']
   UAlert: typeof import("../../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']
@@ -107,6 +108,7 @@ interface _GlobalComponents {
   LazyProductsSection: LazyComponent<typeof import("../../components/ProductsSection.vue")['default']>
   LazyRoadmapSection: LazyComponent<typeof import("../../components/RoadmapSection.vue")['default']>
   LazySolutionSection: LazyComponent<typeof import("../../components/SolutionSection.vue")['default']>
+  LazyStatsSection: LazyComponent<typeof import("../../components/StatsSection.vue")['default']>
   LazyTractionSection: LazyComponent<typeof import("../../components/TractionSection.vue")['default']>
   LazyUAccordion: LazyComponent<typeof import("../../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']>
   LazyUAlert: LazyComponent<typeof import("../../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']>

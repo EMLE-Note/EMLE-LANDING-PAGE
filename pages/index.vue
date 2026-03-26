@@ -1,6 +1,11 @@
 <template>
-  <div class="space-y-24 pb-24">
-    <HeroSection />
+  <div class="pb-24 flex flex-col">
+    <!-- Unified Hero and Stats Area -->
+    <HeroSection>
+      <StatsSection />
+    </HeroSection>
+
+    <!-- Content Sections (each has own padding) -->
     <ProblemSection />
     <SolutionSection />
     <ProductsSection />
