@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    font-family: 'Cairo', sans-serif !important;
+  }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    @apply bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300;
+  }
+
+  /* Ensure strong text contrast in light mode */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-zinc-900 dark:text-white;
+  }
+
+  p {
+    @apply text-zinc-700 dark:text-zinc-300;
+  }
+}
+
+/* Gradient text using exact brand color */
+.gradient-text {
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(to left, #00adee, #0086c3);
+}
