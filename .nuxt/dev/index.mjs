@@ -26,7 +26,7 @@ import { readFile } from 'node:fs/promises';
 import consola, { consola as consola$1 } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/consola/dist/index.mjs';
 import { ErrorParser } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/youch-core/build/index.js';
 import { Youch } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/source-map/source-map.js';
+import { SourceMapConsumer } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/nitropack/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { getContext } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/unctx/dist/index.mjs';
 import { captureRawStackTrace, parseRawStackTrace } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/errx/dist/index.js';
@@ -1124,16 +1124,6 @@ const _inlineRuntimeConfig = {
     "routeRules": {
       "/__nuxt_error": {
         "cache": false
-      },
-      "/_nuxt/builds/meta/**": {
-        "headers": {
-          "cache-control": "public, max-age=31536000, immutable"
-        }
-      },
-      "/_nuxt/builds/**": {
-        "headers": {
-          "cache-control": "public, max-age=1, immutable"
-        }
       }
     }
   },
@@ -1153,16 +1143,16 @@ const _inlineRuntimeConfig = {
       "configLocales": [
         {
           "code": "en",
-          "dir": "ltr",
           "language": "en-US",
+          "dir": "ltr",
           "files": [
             "C:/Users/user/Desktop/main-land/emle landing/locales/en.json"
           ]
         },
         {
           "code": "ar",
-          "dir": "rtl",
           "language": "ar-EG",
+          "dir": "rtl",
           "files": [
             "C:/Users/user/Desktop/main-land/emle landing/locales/ar.json"
           ]
@@ -2700,7 +2690,7 @@ function readAsset (id) {
   return promises.readFile(resolve$1(serverDir, assets[id].path))
 }
 
-const publicAssetBases = {"/_nuxt/builds/meta/":{"maxAge":31536000},"/_nuxt/builds/":{"maxAge":1}};
+const publicAssetBases = {};
 
 function isPublicAssetURL(id = '') {
   if (assets[id]) {
@@ -3704,18 +3694,6 @@ const handler = defineRenderHandler(async (event) => {
 			crossorigin: "anonymous",
 			href: payloadURL
 		} ] }, headEntryOptions);
-	}
-	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
-		ssrContext.head.push({ link: [{
-			rel: "preload",
-			as: "fetch",
-			fetchpriority: "low",
-			crossorigin: "anonymous",
-			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
-		}] }, {
-			...headEntryOptions,
-			tagPriority: "low"
-		});
 	}
 	// 2. Styles
 	if (inlinedStyles.length) {

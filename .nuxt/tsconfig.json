@@ -161,7 +161,7 @@
         "./tailwind/expose/*"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev"
+        "../node_modules/mocked-exports/lib/proxy"
       ],
       "#components": [
         "./components"

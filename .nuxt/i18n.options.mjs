@@ -43,16 +43,16 @@ export const nuxtI18nOptions = {
   "locales": [
     {
       "code": "en",
-      "dir": "ltr",
       "language": "en-US",
+      "dir": "ltr",
       "files": [
         "C:/Users/user/Desktop/main-land/emle landing/locales/en.json"
       ]
     },
     {
       "code": "ar",
-      "dir": "rtl",
       "language": "ar-EG",
+      "dir": "rtl",
       "files": [
         "C:/Users/user/Desktop/main-land/emle landing/locales/ar.json"
       ]
@@ -92,8 +92,8 @@ export const nuxtI18nOptions = {
 export const normalizedLocales = [
   {
     "code": "en",
-    "dir": "ltr",
     "language": "en-US",
+    "dir": "ltr",
     "files": [
       {
         "path": "C:/Users/user/Desktop/main-land/emle landing/locales/en.json"
@@ -102,8 +102,8 @@ export const normalizedLocales = [
   },
   {
     "code": "ar",
-    "dir": "rtl",
     "language": "ar-EG",
+    "dir": "rtl",
     "files": [
       {
         "path": "C:/Users/user/Desktop/main-land/emle landing/locales/ar.json"

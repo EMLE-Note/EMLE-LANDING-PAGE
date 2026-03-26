@@ -8,6 +8,13 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+
+  // Fix: Disable appManifest to resolve "#app-manifest" pre-transform error
+  // that breaks all client-side JavaScript (hydration, events, animations)
+  experimental: {
+    appManifest: false
+  },
+
   modules: [
     '@nuxt/ui',
     '@nuxtjs/google-fonts',
@@ -16,8 +23,8 @@ export default defineNuxtConfig({
 
   i18n: {
     locales: [
-      { code: 'en', iso: 'en-US', dir: 'ltr', file: 'en.json' },
-      { code: 'ar', iso: 'ar-EG', dir: 'rtl', file: 'ar.json' }
+      { code: 'en', language: 'en-US', dir: 'ltr', file: 'en.json' },
+      { code: 'ar', language: 'ar-EG', dir: 'rtl', file: 'ar.json' }
     ],
     defaultLocale: 'ar',
     strategy: 'prefix_except_default',

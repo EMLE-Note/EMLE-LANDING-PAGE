@@ -1,5 +1,5 @@
 <template>
-  <section ref="sectionRef" class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
+  <section class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
     <!-- Glassmorphic Card Container -->
     <div class="relative w-full rounded-3xl bg-white/40 dark:bg-zinc-950/40 backdrop-blur-2xl border border-white/50 dark:border-zinc-800/50 shadow-2xl overflow-hidden py-10 md:py-14" style="box-shadow: 0 30px 60px -15px rgba(0,173,238,0.15);">
       
@@ -14,9 +14,9 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           <div v-for="(stat, idx) in stats" :key="idx" class="flex flex-col items-center justify-center p-2 rounded-2xl transition-transform duration-300 hover:-translate-y-2 group">
             <div class="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white mb-3 tracking-tight flex items-baseline drop-shadow-sm group-hover:text-[#00adee] transition-colors duration-300">
-              <span v-if="stat.prefix" class="text-3xl text-[#00adee] ml-1">{{ stat.prefix }}</span>
-              <span class="tabular-nums font-bold" style="font-feature-settings: 'tnum';">{{ displayedStats[idx].toLocaleString('en-US') }}</span>
-              <span v-if="stat.suffix" class="text-3xl text-[#00adee] mr-1">{{ stat.suffix }}</span>
+              <span v-if="stat.prefix" class="text-3xl text-[#00adee] rtl:ml-1 ltr:mr-1">{{ stat.prefix }}</span>
+              <span class="tabular-nums font-bold" style="font-feature-settings: 'tnum';">{{ animatedValues[idx].toLocaleString('en-US') }}</span>
+              <span v-if="stat.suffix" class="text-3xl text-[#00adee] rtl:mr-1 ltr:ml-1">{{ stat.suffix }}</span>
             </div>
             <span class="text-sm md:text-base font-bold text-zinc-500 dark:text-zinc-400 tracking-wide text-center uppercase group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300">{{ $t(stat.key) }}</span>
           </div>
@@ -36,46 +36,36 @@ const stats = [
   { value: 70, prefix: '', suffix: '%', key: 'stats.cost_reduction' }
 ];
 
-const displayedStats = ref(stats.map(() => 0));
-const sectionRef = ref(null);
+const animatedValues = ref([0, 0, 0, 0]);
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      animateValues();
-      observer.disconnect();
-    }
-  }, { threshold: 0.1 });
-  
-  if (sectionRef.value) {
-    observer.observe(sectionRef.value);
-  }
+  // Small delay to ensure DOM is painted first, then animate
+  setTimeout(() => {
+    startAnimation();
+  }, 300);
 });
 
-function animateValues() {
-  const duration = 2500; // 2.5 seconds
-  let startTimestamp = null;
+function startAnimation() {
+  const duration = 2500;
+  let start = null;
   
-  function update(timestamp) {
-    if (!startTimestamp) startTimestamp = timestamp;
-    const elapsed = timestamp - startTimestamp;
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const elapsed = timestamp - start;
     const progress = Math.min(elapsed / duration, 1);
     
-    // Ease out quart (smooth deceleration)
-    const easeProgress = 1 - Math.pow(1 - progress, 4);
+    // Ease out quart
+    const eased = 1 - Math.pow(1 - progress, 4);
     
-    displayedStats.value = stats.map(stat => 
-      Math.floor(stat.value * easeProgress)
-    );
+    animatedValues.value = stats.map(s => Math.floor(s.value * eased));
     
     if (progress < 1) {
-      requestAnimationFrame(update);
+      requestAnimationFrame(step);
     } else {
-      // Ensure exact final values
-      displayedStats.value = stats.map(stat => stat.value);
+      animatedValues.value = stats.map(s => s.value);
     }
   }
   
-  requestAnimationFrame(update);
+  requestAnimationFrame(step);
 }
 </script>

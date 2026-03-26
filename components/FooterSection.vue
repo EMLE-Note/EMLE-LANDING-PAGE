@@ -27,7 +27,7 @@
         
         <!-- Brand & Description -->
         <div class="md:col-span-12 lg:col-span-4">
-          <NuxtLink :to="localePath('/')" class="inline-flex items-center gap-2 mb-6 group">
+          <NuxtLink to="/" class="inline-flex items-center gap-2 mb-6 group">
             <!-- Light Mode Logo -->
             <img src="~/assets/logo emli light.png" alt="Emily Notes" class="h-10 w-auto block dark:hidden group-hover:scale-105 transition-transform duration-300" />
             <!-- Dark Mode Logo -->
@@ -104,6 +104,4 @@
   </footer>
 </template>
 
-<script setup>
-const localePath = useLocalePath()
-</script>
+
