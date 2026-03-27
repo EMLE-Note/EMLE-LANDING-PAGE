@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-24 flex flex-col">
+  <div class="flex flex-col">
     <!-- Unified Hero and Stats Area -->
     <HeroSection>
       <StatsSection />

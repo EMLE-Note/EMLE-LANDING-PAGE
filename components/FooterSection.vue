@@ -1,5 +1,5 @@
 <template>
-  <footer class="relative bg-white dark:bg-zinc-950 pt-20 pb-10 overflow-hidden border-t border-zinc-200 dark:border-zinc-800">
+  <footer class="relative bg-white dark:bg-zinc-950 pt-20 pb-10 overflow-hidden">
     <!-- Optional: Subtle top glow -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-1 bg-gradient-to-r from-transparent via-[#00adee] to-transparent opacity-50"></div>
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-24 blur-[100px] opacity-10 dark:opacity-20 pointer-events-none" style="background: #00adee;"></div>
