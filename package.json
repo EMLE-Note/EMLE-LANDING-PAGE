@@ -7,14 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "clean": "rmdir /S /Q node_modules & rmdir /S /Q .nuxt & del /F package-lock.json & del /F pnpm-lock.yaml"
   },
   "dependencies": {
     "@nuxt/ui": "^2.15.2",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/i18n": "^8.3.1",
-    "nuxt": "^3.11.0",
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "@nuxtjs/i18n": "^10.2.4",
+    "nuxt": "^3.13.0"
   }
 }

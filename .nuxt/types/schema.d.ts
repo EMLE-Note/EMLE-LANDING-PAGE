@@ -25,37 +25,15 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
 
       defaultLocale: string,
 
-      defaultDirection: string,
-
-      strategy: string,
-
-      lazy: boolean,
-
       rootRedirect: any,
 
-      routesNameSeparator: string,
-
-      defaultLocaleRouteNameSuffix: string,
+      redirectStatusCode: number,
 
       skipSettingLocaleOnNavigate: boolean,
 
-      differentDomains: boolean,
-
-      trailingSlash: boolean,
-
-      configLocales: Array<{
+      locales: Array<{
 
       }>,
-
-      locales: {
-         en: {
-            domain: any,
-         },
-
-         ar: {
-            domain: any,
-         },
-      },
 
       detectBrowserLanguage: {
          alwaysRedirect: boolean,
@@ -78,12 +56,36 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
       experimental: {
          localeDetector: string,
 
-         switchLocalePathLinkSSR: boolean,
+         typedPages: boolean,
 
-         autoImportTranslationFunctions: boolean,
+         typedOptionsAndMessages: boolean,
+
+         alternateLinkCanonicalQueries: boolean,
+
+         devCache: boolean,
+
+         cacheLifetime: any,
+
+         stripMessagesPayload: boolean,
+
+         preload: boolean,
+
+         strictSeo: boolean,
+
+         nitroContextDetection: boolean,
+
+         httpCacheDuration: number,
       },
 
-      multiDomainLocales: boolean,
+      domainLocales: {
+         en: {
+            domain: string,
+         },
+
+         ar: {
+            domain: string,
+         },
+      },
    },
   }
 declare module '@nuxt/schema' {

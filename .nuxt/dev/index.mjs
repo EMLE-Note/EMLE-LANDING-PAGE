@@ -3,12 +3,13 @@ import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, getResponseStatusText } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, getResponseStatus, createError, getCookie, setCookie, sanitizeStatusCode, removeResponseHeader, getQuery as getQuery$1, readBody, getRouterParam, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatusText } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/h3/dist/index.mjs';
 import { escapeHtml } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/@vue/shared/dist/shared.cjs.js';
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { parseURL, withoutBase, joinURL, getQuery, withQuery, joinRelativeURL, parsePath, withLeadingSlash, withoutTrailingSlash, withTrailingSlash, decodePath } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/ufo/dist/index.mjs';
 import { renderToString } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/vue/server-renderer/index.mjs';
 import { klona } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/defu/dist/defu.mjs';
+import defu, { defuFn, createDefu } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/defu/dist/defu.mjs';
 import destr, { destr as destr$1 } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/destr/dist/index.mjs';
 import { snakeCase } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/scule/dist/index.mjs';
 import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/unhead/dist/server.mjs';
@@ -27,6 +28,7 @@ import consola, { consola as consola$1 } from 'file://C:/Users/user/Desktop/main
 import { ErrorParser } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/youch-core/build/index.js';
 import { Youch } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/youch/build/index.js';
 import { SourceMapConsumer } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/nitropack/node_modules/source-map/source-map.js';
+import { createRouterMatcher } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/@nuxtjs/i18n/node_modules/vue-router/vue-router.node.mjs';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { getContext } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/unctx/dist/index.mjs';
 import { captureRawStackTrace, parseRawStackTrace } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/errx/dist/index.js';
@@ -38,260 +40,6 @@ import { walkResolver } from 'file://C:/Users/user/Desktop/main-land/emle%20land
 import { getIcons } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/node_modules/@iconify/utils/lib/index.mjs';
 import { collections } from 'file://C:/Users/user/Desktop/main-land/emle%20landing/.nuxt/nuxt-icon-server-bundle.mjs';
 
-const HASH_RE = /#/g;
-const AMPERSAND_RE = /&/g;
-const SLASH_RE = /\//g;
-const EQUAL_RE = /=/g;
-const PLUS_RE = /\+/g;
-const ENC_CARET_RE = /%5e/gi;
-const ENC_BACKTICK_RE = /%60/gi;
-const ENC_PIPE_RE = /%7c/gi;
-const ENC_SPACE_RE = /%20/gi;
-const ENC_SLASH_RE = /%2f/gi;
-function encode(text) {
-  return encodeURI("" + text).replace(ENC_PIPE_RE, "|");
-}
-function encodeQueryValue(input) {
-  return encode(typeof input === "string" ? input : JSON.stringify(input)).replace(PLUS_RE, "%2B").replace(ENC_SPACE_RE, "+").replace(HASH_RE, "%23").replace(AMPERSAND_RE, "%26").replace(ENC_BACKTICK_RE, "`").replace(ENC_CARET_RE, "^").replace(SLASH_RE, "%2F");
-}
-function encodeQueryKey(text) {
-  return encodeQueryValue(text).replace(EQUAL_RE, "%3D");
-}
-function decode(text = "") {
-  try {
-    return decodeURIComponent("" + text);
-  } catch {
-    return "" + text;
-  }
-}
-function decodePath(text) {
-  return decode(text.replace(ENC_SLASH_RE, "%252F"));
-}
-function decodeQueryKey(text) {
-  return decode(text.replace(PLUS_RE, " "));
-}
-function decodeQueryValue(text) {
-  return decode(text.replace(PLUS_RE, " "));
-}
-
-function parseQuery(parametersString = "") {
-  const object = /* @__PURE__ */ Object.create(null);
-  if (parametersString[0] === "?") {
-    parametersString = parametersString.slice(1);
-  }
-  for (const parameter of parametersString.split("&")) {
-    const s = parameter.match(/([^=]+)=?(.*)/) || [];
-    if (s.length < 2) {
-      continue;
-    }
-    const key = decodeQueryKey(s[1]);
-    if (key === "__proto__" || key === "constructor") {
-      continue;
-    }
-    const value = decodeQueryValue(s[2] || "");
-    if (object[key] === void 0) {
-      object[key] = value;
-    } else if (Array.isArray(object[key])) {
-      object[key].push(value);
-    } else {
-      object[key] = [object[key], value];
-    }
-  }
-  return object;
-}
-function encodeQueryItem(key, value) {
-  if (typeof value === "number" || typeof value === "boolean") {
-    value = String(value);
-  }
-  if (!value) {
-    return encodeQueryKey(key);
-  }
-  if (Array.isArray(value)) {
-    return value.map(
-      (_value) => `${encodeQueryKey(key)}=${encodeQueryValue(_value)}`
-    ).join("&");
-  }
-  return `${encodeQueryKey(key)}=${encodeQueryValue(value)}`;
-}
-function stringifyQuery(query) {
-  return Object.keys(query).filter((k) => query[k] !== void 0).map((k) => encodeQueryItem(k, query[k])).filter(Boolean).join("&");
-}
-
-const PROTOCOL_STRICT_REGEX = /^[\s\w\0+.-]{2,}:([/\\]{1,2})/;
-const PROTOCOL_REGEX = /^[\s\w\0+.-]{2,}:([/\\]{2})?/;
-const PROTOCOL_RELATIVE_REGEX = /^([/\\]\s*){2,}[^/\\]/;
-const JOIN_LEADING_SLASH_RE = /^\.?\//;
-function hasProtocol(inputString, opts = {}) {
-  if (typeof opts === "boolean") {
-    opts = { acceptRelative: opts };
-  }
-  if (opts.strict) {
-    return PROTOCOL_STRICT_REGEX.test(inputString);
-  }
-  return PROTOCOL_REGEX.test(inputString) || (opts.acceptRelative ? PROTOCOL_RELATIVE_REGEX.test(inputString) : false);
-}
-function hasTrailingSlash(input = "", respectQueryAndFragment) {
-  {
-    return input.endsWith("/");
-  }
-}
-function withoutTrailingSlash(input = "", respectQueryAndFragment) {
-  {
-    return (hasTrailingSlash(input) ? input.slice(0, -1) : input) || "/";
-  }
-}
-function withTrailingSlash(input = "", respectQueryAndFragment) {
-  {
-    return input.endsWith("/") ? input : input + "/";
-  }
-}
-function hasLeadingSlash(input = "") {
-  return input.startsWith("/");
-}
-function withLeadingSlash(input = "") {
-  return hasLeadingSlash(input) ? input : "/" + input;
-}
-function withoutBase(input, base) {
-  if (isEmptyURL(base)) {
-    return input;
-  }
-  const _base = withoutTrailingSlash(base);
-  if (!input.startsWith(_base)) {
-    return input;
-  }
-  const nextChar = input[_base.length];
-  if (nextChar && nextChar !== "/" && nextChar !== "?") {
-    return input;
-  }
-  const trimmed = input.slice(_base.length);
-  return trimmed[0] === "/" ? trimmed : "/" + trimmed;
-}
-function withQuery(input, query) {
-  const parsed = parseURL(input);
-  const mergedQuery = { ...parseQuery(parsed.search), ...query };
-  parsed.search = stringifyQuery(mergedQuery);
-  return stringifyParsedURL(parsed);
-}
-function getQuery(input) {
-  return parseQuery(parseURL(input).search);
-}
-function isEmptyURL(url) {
-  return !url || url === "/";
-}
-function isNonEmptyURL(url) {
-  return url && url !== "/";
-}
-function joinURL(base, ...input) {
-  let url = base || "";
-  for (const segment of input.filter((url2) => isNonEmptyURL(url2))) {
-    if (url) {
-      const _segment = segment.replace(JOIN_LEADING_SLASH_RE, "");
-      url = withTrailingSlash(url) + _segment;
-    } else {
-      url = segment;
-    }
-  }
-  return url;
-}
-function joinRelativeURL(..._input) {
-  const JOIN_SEGMENT_SPLIT_RE = /\/(?!\/)/;
-  const input = _input.filter(Boolean);
-  const segments = [];
-  let segmentsDepth = 0;
-  for (const i of input) {
-    if (!i || i === "/") {
-      continue;
-    }
-    for (const [sindex, s] of i.split(JOIN_SEGMENT_SPLIT_RE).entries()) {
-      if (!s || s === ".") {
-        continue;
-      }
-      if (s === "..") {
-        if (segments.length === 1 && hasProtocol(segments[0])) {
-          continue;
-        }
-        segments.pop();
-        segmentsDepth--;
-        continue;
-      }
-      if (sindex === 1 && segments[segments.length - 1]?.endsWith(":/")) {
-        segments[segments.length - 1] += "/" + s;
-        continue;
-      }
-      segments.push(s);
-      segmentsDepth++;
-    }
-  }
-  let url = segments.join("/");
-  if (segmentsDepth >= 0) {
-    if (input[0]?.startsWith("/") && !url.startsWith("/")) {
-      url = "/" + url;
-    } else if (input[0]?.startsWith("./") && !url.startsWith("./")) {
-      url = "./" + url;
-    }
-  } else {
-    url = "../".repeat(-1 * segmentsDepth) + url;
-  }
-  if (input[input.length - 1]?.endsWith("/") && !url.endsWith("/")) {
-    url += "/";
-  }
-  return url;
-}
-
-const protocolRelative = Symbol.for("ufo:protocolRelative");
-function parseURL(input = "", defaultProto) {
-  const _specialProtoMatch = input.match(
-    /^[\s\0]*(blob:|data:|javascript:|vbscript:)(.*)/i
-  );
-  if (_specialProtoMatch) {
-    const [, _proto, _pathname = ""] = _specialProtoMatch;
-    return {
-      protocol: _proto.toLowerCase(),
-      pathname: _pathname,
-      href: _proto + _pathname,
-      auth: "",
-      host: "",
-      search: "",
-      hash: ""
-    };
-  }
-  if (!hasProtocol(input, { acceptRelative: true })) {
-    return defaultProto ? parseURL(defaultProto + input) : parsePath(input);
-  }
-  const [, protocol = "", auth, hostAndPath = ""] = input.replace(/\\/g, "/").match(/^[\s\0]*([\w+.-]{2,}:)?\/\/([^/@]+@)?(.*)/) || [];
-  let [, host = "", path = ""] = hostAndPath.match(/([^#/?]*)(.*)?/) || [];
-  if (protocol === "file:") {
-    path = path.replace(/\/(?=[A-Za-z]:)/, "");
-  }
-  const { pathname, search, hash } = parsePath(path);
-  return {
-    protocol: protocol.toLowerCase(),
-    auth: auth ? auth.slice(0, Math.max(0, auth.length - 1)) : "",
-    host,
-    pathname,
-    search,
-    hash,
-    [protocolRelative]: !protocol
-  };
-}
-function parsePath(input = "") {
-  const [pathname = "", search = "", hash = ""] = (input.match(/([^#?]*)(\?[^#]*)?(#.*)?/) || []).splice(1);
-  return {
-    pathname,
-    search,
-    hash
-  };
-}
-function stringifyParsedURL(parsed) {
-  const pathname = parsed.pathname || "";
-  const search = parsed.search ? (parsed.search.startsWith("?") ? "" : "?") + parsed.search : "";
-  const hash = parsed.hash || "";
-  const auth = parsed.auth ? parsed.auth + "@" : "";
-  const host = parsed.host || "";
-  const proto = parsed.protocol || parsed[protocolRelative] ? (parsed.protocol || "") + "//" : "";
-  return proto + auth + host + pathname + search + hash;
-}
-
 const serverAssets = [{"baseName":"server","dir":"C:/Users/user/Desktop/main-land/emle landing/server/assets"}];
 
 const assets$1 = createStorage();
@@ -300,18 +48,18 @@ for (const asset of serverAssets) {
   assets$1.mount(asset.baseName, unstorage_47drivers_47fs({ base: asset.dir, ignore: (asset?.ignore || []) }));
 }
 
-const storage = createStorage({});
+const storage$1 = createStorage({});
 
-storage.mount('/assets', assets$1);
+storage$1.mount('/assets', assets$1);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/user/Desktop/main-land/emle landing","watchOptions":{"ignored":[null]}}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/user/Desktop/main-land/emle landing/server","watchOptions":{"ignored":[null]}}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/user/Desktop/main-land/emle landing/.nuxt"}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/user/Desktop/main-land/emle landing/.nuxt/cache"}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"C:/Users/user/Desktop/main-land/emle landing/.data/kv"}));
+storage$1.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/user/Desktop/main-land/emle landing","watchOptions":{"ignored":[null]}}));
+storage$1.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/user/Desktop/main-land/emle landing/server","watchOptions":{"ignored":[null]}}));
+storage$1.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/user/Desktop/main-land/emle landing/.nuxt"}));
+storage$1.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/user/Desktop/main-land/emle landing/.nuxt/cache"}));
+storage$1.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"C:/Users/user/Desktop/main-land/emle landing/.data/kv"}));
 
 function useStorage(base = "") {
-  return base ? prefixStorage(storage, base) : storage;
+  return base ? prefixStorage(storage$1, base) : storage$1;
 }
 
 const Hasher = /* @__PURE__ */ (() => {
@@ -1131,41 +879,21 @@ const _inlineRuntimeConfig = {
     "i18n": {
       "baseUrl": "",
       "defaultLocale": "ar",
-      "defaultDirection": "ltr",
-      "strategy": "prefix_except_default",
-      "lazy": false,
       "rootRedirect": "",
-      "routesNameSeparator": "___",
-      "defaultLocaleRouteNameSuffix": "default",
+      "redirectStatusCode": 302,
       "skipSettingLocaleOnNavigate": false,
-      "differentDomains": false,
-      "trailingSlash": false,
-      "configLocales": [
+      "locales": [
         {
           "code": "en",
           "language": "en-US",
-          "dir": "ltr",
-          "files": [
-            "C:/Users/user/Desktop/main-land/emle landing/locales/en.json"
-          ]
+          "dir": "ltr"
         },
         {
           "code": "ar",
           "language": "ar-EG",
-          "dir": "rtl",
-          "files": [
-            "C:/Users/user/Desktop/main-land/emle landing/locales/ar.json"
-          ]
+          "dir": "rtl"
         }
       ],
-      "locales": {
-        "en": {
-          "domain": ""
-        },
-        "ar": {
-          "domain": ""
-        }
-      },
       "detectBrowserLanguage": {
         "alwaysRedirect": false,
         "cookieCrossOrigin": false,
@@ -1178,10 +906,25 @@ const _inlineRuntimeConfig = {
       },
       "experimental": {
         "localeDetector": "",
-        "switchLocalePathLinkSSR": false,
-        "autoImportTranslationFunctions": false
+        "typedPages": true,
+        "typedOptionsAndMessages": false,
+        "alternateLinkCanonicalQueries": true,
+        "devCache": false,
+        "cacheLifetime": "",
+        "stripMessagesPayload": false,
+        "preload": false,
+        "strictSeo": false,
+        "nitroContextDetection": true,
+        "httpCacheDuration": 10
       },
-      "multiDomainLocales": false
+      "domainLocales": {
+        "en": {
+          "domain": ""
+        },
+        "ar": {
+          "domain": ""
+        }
+      }
     }
   },
   "icon": {
@@ -2570,7 +2313,717 @@ const _Ebyv3lMdJyEwYe_VOMAj6E3q9iK9Tod8q4Gynh982OA = (function(nitro) {
   });
 });
 
-const rootDir = "C:/Users/user/Desktop/main-land/emle landing";
+/*!
+  * shared v11.3.0
+  * (c) 2026 kazuya kawaguchi
+  * Released under the MIT License.
+  */
+const _create = Object.create;
+const create = (obj = null) => _create(obj);
+/* eslint-enable */
+/**
+ * Useful Utilities By Evan you
+ * Modified by kazuya kawaguchi
+ * MIT License
+ * https://github.com/vuejs/vue-next/blob/master/packages/shared/src/index.ts
+ * https://github.com/vuejs/vue-next/blob/master/packages/shared/src/codeframe.ts
+ */
+const isArray = Array.isArray;
+const isFunction = (val) => typeof val === 'function';
+const isString = (val) => typeof val === 'string';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isObject = (val) => val !== null && typeof val === 'object';
+const objectToString = Object.prototype.toString;
+const toTypeString = (value) => objectToString.call(value);
+
+const isNotObjectOrIsArray = (val) => !isObject(val) || isArray(val);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function deepCopy(src, des) {
+    // src and des should both be objects, and none of them can be a array
+    if (isNotObjectOrIsArray(src) || isNotObjectOrIsArray(des)) {
+        throw new Error('Invalid value');
+    }
+    const stack = [{ src, des }];
+    while (stack.length) {
+        const { src, des } = stack.pop();
+        // using `Object.keys` which skips prototype properties
+        Object.keys(src).forEach(key => {
+            if (key === '__proto__') {
+                return;
+            }
+            // if src[key] is an object/array, set des[key]
+            // to empty object/array to prevent setting by reference
+            if (isObject(src[key]) && !isObject(des[key])) {
+                des[key] = Array.isArray(src[key]) ? [] : create();
+            }
+            if (isNotObjectOrIsArray(des[key]) || isNotObjectOrIsArray(src[key])) {
+                // replace with src[key] when:
+                // src[key] or des[key] is not an object, or
+                // src[key] or des[key] is an array
+                des[key] = src[key];
+            }
+            else {
+                // src[key] and des[key] are both objects, merge them
+                stack.push({ src: src[key], des: des[key] });
+            }
+        });
+    }
+}
+
+const __nuxtMock = { runWithContext: async (fn) => await fn() };
+const merger = createDefu((obj, key, value) => {
+  if (key === "messages" || key === "datetimeFormats" || key === "numberFormats") {
+    obj[key] ??= create(null);
+    deepCopy(value, obj[key]);
+    return true;
+  }
+});
+async function loadVueI18nOptions(vueI18nConfigs) {
+  const nuxtApp = __nuxtMock;
+  let vueI18nOptions = { messages: create(null) };
+  for (const configFile of vueI18nConfigs) {
+    const resolver = await configFile().then((x) => isModule(x) ? x.default : x);
+    const resolved = isFunction(resolver) ? await nuxtApp.runWithContext(() => resolver()) : resolver;
+    vueI18nOptions = merger(create(null), resolved, vueI18nOptions);
+  }
+  vueI18nOptions.fallbackLocale ??= false;
+  return vueI18nOptions;
+}
+const isModule = (val) => toTypeString(val) === "[object Module]";
+async function getLocaleMessages(locale, loader) {
+  const nuxtApp = __nuxtMock;
+  try {
+    const getter = await nuxtApp.runWithContext(loader.load).then((x) => isModule(x) ? x.default : x);
+    return isFunction(getter) ? await nuxtApp.runWithContext(() => getter(locale)) : getter;
+  } catch (e) {
+    throw new Error(`Failed loading locale (${locale}): ` + e.message);
+  }
+}
+async function getLocaleMessagesMerged(locale, loaders = []) {
+  const nuxtApp = __nuxtMock;
+  const messages = await Promise.all(
+    loaders.map((loader) => nuxtApp.runWithContext(() => getLocaleMessages(locale, loader)))
+  );
+  const merged = {};
+  for (const message of messages) {
+    deepCopy(message, merged);
+  }
+  return merged;
+}
+
+var common$1 = {
+	start_free: "Start for Free",
+	explore_products: "Explore Products",
+	learn_more: "Learn More"
+};
+var navbar$1 = {
+	problem: "Challenges",
+	products: "Products",
+	ai: "Artificial Intelligence",
+	roadmap: "Roadmap",
+	login: "Login",
+	get_started: "Get Started",
+	switch_theme: "Toggle Theme"
+};
+var hero$1 = {
+	badge: "Discover the new AI capabilities",
+	title_part1: "An Integrated Digital Medical Education Ecosystem Driven by",
+	title_highlight: "AI",
+	desc: "A dedicated platform for qualifying and assessing physicians. We combine learning, assessment, and artificial intelligence to provide a comprehensive journey from undergraduate studies to continuous medical education."
+};
+var stats$1 = {
+	doctors: "Registered Doctors",
+	hours: "Annual Learning Hours",
+	products: "Integrated Products",
+	cost_reduction: "Cost Reduction"
+};
+var problem$1 = {
+	subtitle: "Market Challenges",
+	title: "Why is Emily Notes Essential Today?",
+	desc: "The medical education sector faces significant digital lag, relying heavily on traditional, unscalable models.",
+	p1_title: "Focus on Memorization",
+	p1_desc: "Current systems measure the ability to memorize rather than actual clinical competence.",
+	p2_title: "Practice Gap",
+	p2_desc: "A sharp disconnect between academic theory and daily medical practice.",
+	p3_title: "Lack of Smart Assessment",
+	p3_desc: "The ecosystem lacks intelligent assessment systems capable of tracking a physician's progression.",
+	p4_title: "High Production Cost",
+	p4_desc: "Reliance on traditional methods makes developing and producing medical content a major hurdle.",
+	p5_title: "Limited Programs",
+	p5_desc: "A scarcity of accredited, digitally accessible continuous medical education (CME) programs."
+};
+var solution$1 = {
+	subtitle: "Proposed Solution",
+	title_part1: "A Comprehensive Digital Ecosystem Powered by",
+	title_highlight: "AI",
+	desc: "Emily Notes offers a solution that unifies learning, assessment, and intelligent analytics within a single platform, ensuring an integrated experience that outperforms traditional methods with sustainable results.",
+	point1: "Reduce the production cost of specialized medical content.",
+	point2: "Increase educational efficiency and trainee retention rates.",
+	point3: "Support rapid, sustainable regional expansion.",
+	how_it_works: "How do we work?"
+};
+var products$1 = {
+	subtitle: "The Ecosystem",
+	title: "An Integrated Product Ecosystem",
+	desc: "The ecosystem is built to be synergistic; each pillar reinforces the others, enhancing cumulative value and maximizing user retention.",
+	status_active: "Active Product",
+	status_dev: "In Development",
+	explore_more: "Discover More",
+	p1_title: "Emily Core App",
+	p1_desc: "A unified learning and assessment experience consolidating all resources into a tailored UI for daily interaction.",
+	p2_title: "Video Medical Courses",
+	p2_desc: "High-quality medical video courses supervised by elite professors, broken down into precise learning modules.",
+	p3_title: "Comprehensive Medical Books",
+	p3_desc: "An advanced e-reading system powered by interactive mind maps to facilitate information retrieval.",
+	p4_title: "Smart Question Bank",
+	p4_desc: "Question banks covering undergraduate and fellowship levels, equipped with precise performance analytics enhancing frequent use.",
+	p5_title: "Professional Medical Community",
+	p5_desc: "A social learning platform connecting doctors and institutions, simplifying Continuing Professional Development (CPD) tracking.",
+	p6_title: "Virtual Patient",
+	p6_desc: "Realistic interactive simulations using AI to train doctors in a safe and guided clinical environment."
+};
+var ai$1 = {
+	subtitle: "Real Artificial Intelligence",
+	title: "The Core Operating Engine",
+	desc: "AI in Emily Notes is not just a secondary technical add-on; it is the engine driving the boundaries of what's possible in medical education.",
+	f1_title: "Automated Question Generation",
+	f1_desc: "Extract and generate reliable exam questions directly from accredited medical references.",
+	f2_title: "Automated Analysis & Summarization",
+	f2_desc: "Summarize lengthy video lectures and create instant quizzes on the fly.",
+	f3_title: "Smart Medical Assistant",
+	f3_desc: "An advanced medical conversational bot that understands and supports local Arabic dialects to facilitate complex concepts.",
+	f4_title: "Supported Virtual Patient",
+	f4_desc: "Assess the doctor's responses and diagnoses based on dynamic chats mimicking real-life symptoms.",
+	metric_reduction: "Cost Reduction",
+	metric_desc: "Reducing operational and production costs through advanced AI automation"
+};
+var business$1 = {
+	subtitle: "Diversity & Sustainability",
+	title: "Business & Revenue Model",
+	desc: "The business model relies on flexible, recurring revenue streams ensuring project sustainability and long-term risk reduction.",
+	m1_title: "Individual Subscriptions (B2C)",
+	m1_desc: "Subscription packages aimed at students and doctors to access educational content and question banks.",
+	m2_title: "Institutional Licenses (B2B)",
+	m2_desc: "Long-term licensing contracts for universities, medical syndicates, and teaching hospitals.",
+	m3_title: "Accredited CPD Programs",
+	m3_desc: "Fees for joining Continuing Professional Development programs and issuing certificates.",
+	m4_title: "White Label Solutions",
+	m4_desc: "Providing Emily Notes infrastructure as customized educational solutions for other institutions.",
+	m5_title: "Dashboards & Analytics",
+	m5_desc: "Delivering analytical data and performance reports for academic institutions to track their trainees."
+};
+var traction$1 = {
+	subtitle: "Market Proof",
+	title: "Strategic Partnerships & Institutional Accreditation",
+	partner1: "Ash Sharqia Medical Syndicate",
+	partner2: "Sadat Academy for Management Sciences",
+	partner3: "Faculty of Medicine - Zagazig University",
+	growth_badge: "Strong organic growth reflecting the massive market need"
+};
+var roadmap$1 = {
+	subtitle: "Future Vision",
+	title: "The Path to a Digital Medical University",
+	phase_prefix: "Phase",
+	p1_title: "Geographical Expansion",
+	p1_desc: "Launching confidently into the Saudi and GCC markets with region-specific features.",
+	p2_title: "Academic Expansion",
+	p2_desc: "Adding new healthcare specialties and advanced fellowship programs covering more disciplines.",
+	p3_title: "Virtual University Model",
+	p3_desc: "The official launch of the fully virtual medical university, reshaping systematic learning.",
+	p4_title: "International Accreditation",
+	p4_desc: "Acquiring global accreditations and providing globally recognized, authentic certificates.",
+	p5_title: "Immersive Technologies",
+	p5_desc: "Integrating Virtual Reality (VR) and advanced simulations for surgical and clinical training."
+};
+var footer$1 = {
+	cta_title: "Ready to escalate your educational experience?",
+	cta_subtitle: "Join thousands of doctors who trust Emily Notes every day.",
+	cta_button: "Start your journey for free",
+	desc: "The leading medical assessment and education platform in the Arab world. We are reshaping the future of professional development for doctors by integrating cutting-edge AI technologies with endorsed medical methodologies.",
+	platform: "Platform",
+	platform_products: "Our Products",
+	platform_ai: "Artificial Intelligence",
+	platform_roadmap: "Future Vision",
+	legal: "Legal",
+	legal_terms: "Terms & Conditions",
+	legal_privacy: "Privacy Policy",
+	legal_contact: "Contact Us",
+	newsletter: "Medical Newsletter",
+	newsletter_desc: "Subscribe for the latest updates on medical education, tech news, and fellowship preparation tips.",
+	newsletter_placeholder: "Email Address",
+	newsletter_button: "Subscribe",
+	copy: "Emily Notes (EMLE Notes). All rights reserved.",
+	made_with_passion: "Made with passion to empower doctors"
+};
+const locale_en_46json_03fc0917 = {
+	common: common$1,
+	navbar: navbar$1,
+	hero: hero$1,
+	stats: stats$1,
+	problem: problem$1,
+	solution: solution$1,
+	products: products$1,
+	ai: ai$1,
+	business: business$1,
+	traction: traction$1,
+	roadmap: roadmap$1,
+	footer: footer$1
+};
+
+var common = {
+	start_free: "ابدأ مجاناً",
+	explore_products: "استكشف المنتجات",
+	learn_more: "اعرف المزيد"
+};
+var navbar = {
+	problem: "المشكلة",
+	products: "منتجاتنا",
+	ai: "الذكاء الاصطناعي",
+	roadmap: "الرؤية",
+	login: "تسجيل الدخول",
+	get_started: "ابدأ مجاناً",
+	switch_theme: "تبديل المظهر"
+};
+var hero = {
+	badge: "تعرف على قدرات الذكاء الاصطناعي الجديدة",
+	title_part1: "بنية تعليمية طبية رقمية متكاملة بـ",
+	title_highlight: "الذكاء الاصطناعي",
+	desc: "منصة مخصصة لتأهيل وتقييم الأطباء، تجمع بين التعلم، التقييم، والذكاء الاصطناعي لتوفير رحلة متكاملة من الدراسة الجامعية إلى التعليم الطبي المستمر."
+};
+var stats = {
+	doctors: "طبيب مسجل",
+	hours: "ساعة تعلم سنويًا",
+	products: "منتجات متكاملة",
+	cost_reduction: "خفض بالتكاليف"
+};
+var problem = {
+	subtitle: "تحديات السوق",
+	title: "لماذا إيملي نوتس ضرورية اليوم؟",
+	desc: "يواجه قطاع التعليم الطبي تأخراً رقمياً ملحوظاً ويعتمد بشكل كبير على نماذج تقليدية غير قابلة للتوسع.",
+	p1_title: "التركيز على الحفظ",
+	p1_desc: "الأنظمة الحالية تقيس القدرة على الحفظ بدلاً من الكفاءة السريرية الفعلية.",
+	p2_title: "فجوة الممارسة",
+	p2_desc: "انفصال حاد بين ما يتم تدريسه نظرياً وبين واقع الممارسة الطبية اليومية.",
+	p3_title: "غياب التقييم الذكي",
+	p3_desc: "افتقار المنظومة لأنظمة تقييم وتحليل أداء ذكية قادرة على تتبع تطور مستوى الطبيب.",
+	p4_title: "تكلفة الإنتاج المرتفعة",
+	p4_desc: "الاعتماد على الأساليب التقليدية يجعل تكلفة تطوير وإنتاج المحتوى الطبي عائقاً.",
+	p5_title: "محدودية البرامج",
+	p5_desc: "ندرة برامج التعليم الطبي المستمر المعتمدة والمتاحة رقمياً بشكل مرن."
+};
+var solution = {
+	subtitle: "الحل المقترح",
+	title_part1: "منظومة رقمية شاملة مدفوعة بالـ",
+	title_highlight: "الذكاء الاصطناعي",
+	desc: "تقدم إيملي نوتس حلاً يوحد التعلم والتقييم والتحليل الذكي داخل منصة واحدة، مما يضمن تجربة متكاملة تتفوق على الأساليب التقليدية وتحقق نتائج مستدامة.",
+	point1: "تقليل تكلفة إنتاج المحتوى الطبي المتخصص.",
+	point2: "زيادة الكفاءة التعليمية ومعدل استيعاب المتدربين.",
+	point3: "دعم التوسع الإقليمي السريع والمستدام.",
+	how_it_works: "كيف نعمل؟"
+};
+var products = {
+	subtitle: "النظام البيئي",
+	title: "منظومة منتجات متكاملة",
+	desc: "تم بناء المنظومة لتعمل بشكل تكاملي؛ حيث تعزز كل ركيزة الركائز الأخرى، مما يرفع من القيمة التراكمية ويزيد من معدل احتفاظ المستخدمين.",
+	status_active: "منتج فعّال",
+	status_dev: "قيد التطوير",
+	explore_more: "اكتشف المزيد",
+	p1_title: "تطبيق إيملي الأساسي",
+	p1_desc: "تجربة تعلم وتقييم موحدة تجمع كافة الموارد في واجهة مستخدم واحدة مخصصة للتفاعل اليومي.",
+	p2_title: "الدورات الطبية المصورة",
+	p2_desc: "فيديوهات طبية عالية الجودة تحت إشراف نخبة من الأساتذة، مقسمة لوحدات تعليمية دقيقة.",
+	p3_title: "الكتب الطبية المتكاملة",
+	p3_desc: "نظام قراءة إلكترونية متقدم مدعوم بالخرائط الذهنية التفاعلية لتسهيل استرجاع المعلومات.",
+	p4_title: "بنك الأسئلة الذكي",
+	p4_desc: "بنوك أسئلة تغطي البكالوريوس والزمالة، مزودة بنظام تحليل أداء دقيق يعزز الاستخدام المتكرر.",
+	p5_title: "المجتمع الطبي المهني",
+	p5_desc: "منصة تعلم اجتماعي تربط الأطباء والمؤسسات، وتسهل تتبع نقاط التطوير المهني (CPD).",
+	p6_title: "المريض الافتراضي",
+	p6_desc: "محاكاة تفاعلية واقعية باستخدام الذكاء الاصطناعي لتدريب الأطباء في بيئة سريرية آمنة وموجهة."
+};
+var ai = {
+	subtitle: "ذكاء اصطناعي حقيقي",
+	title: "المحرك التشغيلي الأساسي",
+	desc: "الذكاء الاصطناعي في إيملي نوتس ليس مجرد إضافة تقنية ثانوية، بل هو المحرك الذي يدفع حدود الممكن في التعليم الطبي.",
+	f1_title: "التوليد التلقائي للأسئلة",
+	f1_desc: "استخراج وتوليد أسئلة اختبارات موثوقة مباشرة من المراجع الطبية المعتمدة.",
+	f2_title: "التحليل والتلخيص التلقائي",
+	f2_desc: "تلخيص المحاضرات المرئية الطويلة وإنشاء اختبارات قصيرة (Quizzes) فورية.",
+	f3_title: "المساعد الطبي الذكي",
+	f3_desc: "بوت نقاش طبي متقدم يفهم ويدعم اللهجات المحلية العربية لتسهيل استيعاب المفاهيم المعقدة.",
+	f4_title: "المريض الافتراضي المدعوم",
+	f4_desc: "تقييم ردود فعل الطبيب وتشخيصاته بناءً على محادثات ديناميكية تحاكي الأعراض الحقيقية.",
+	metric_reduction: "خفض في التكاليف",
+	metric_desc: "تخفيض تكاليف الإنتاج والتشغيل بفضل الأتمتة المتقدمة للذكاء الاصطناعي"
+};
+var business = {
+	subtitle: "تنوع واستدامة",
+	title: "نموذج العمل والإيرادات",
+	desc: "يعتمد نموذج العمل على مصادر دخل مرنة ومتكررة تضمن استدامة المشروع وتقليل المخاطر على المدى الطويل.",
+	m1_title: "اشتراكات فردية (B2C)",
+	m1_desc: "باقات اشتراك موجهة للطلاب والأطباء للوصول إلى المحتوى التعليمي وبنوك الأسئلة.",
+	m2_title: "تراخيص للمؤسسات (B2B)",
+	m2_desc: "عقود ترخيص طويلة الأمد للجامعات، النقابات الطبية، والمستشفيات التعليمية.",
+	m3_title: "برامج CPD المعتمدة",
+	m3_desc: "رسوم مقابل الانضمام لبرامج التطوير المهني المستمر وإصدار الشهادات.",
+	m4_title: "العلامة البيضاء (White Label)",
+	m4_desc: "تقديم البنية التحتية لإيملي نوتس كحلول تعليمية مخصصة لمؤسسات أخرى.",
+	m5_title: "لوحات تحكم وتحليلات",
+	m5_desc: "تقديم بيانات تحليلية وتقارير أداء للمؤسسات الأكاديمية لمتابعة مستوى متدربيها."
+};
+var traction = {
+	subtitle: "إثبات السوق",
+	title: "شراكات استراتيجية واعتماد مؤسسي",
+	partner1: "نقابة أطباء الشرقية",
+	partner2: "أكاديمية السادات للعلوم الإدارية",
+	partner3: "كلية الطب – جامعة الزقازيق",
+	growth_badge: "نمو عضوي قوي يعكس حجم الاحتياج الحقيقي"
+};
+var roadmap = {
+	subtitle: "الرؤية المستقبلية",
+	title: "الطريق نحو جامعة طبية رقمية",
+	phase_prefix: "المرحلة",
+	p1_title: "التوسع الجغرافي",
+	p1_desc: "الانطلاق نحو السوق السعودي ودول مجلس التعاون الخليجي بخطى واثقة وميزات مخصصة للمنطقة.",
+	p2_title: "التوسع الأكاديمي",
+	p2_desc: "إضافة تخصصات صحية جديدة وبرامج زمالة متقدمة تغطي تخصصات إضافية.",
+	p3_title: "نموذج الجامعة الافتراضية",
+	p3_desc: "الإطلاق الرسمي للجامعة الطبية الافتراضية بالكامل وإعادة صياغة التعلم المنهجي.",
+	p4_title: "الاعتماد الدولي",
+	p4_desc: "الحصول على اعتمادات دولية وتقديم شهادات موثوقة ومعترف بها عالميًا.",
+	p5_title: "التقنيات الغامرة",
+	p5_desc: "دمج تقنيات الواقع الافتراضي (VR) والمحاكاة المتقدمة للتدريب الجراحي والسريري."
+};
+var footer = {
+	cta_title: "مستعد للارتقاء بتجربتك التعليمية؟",
+	cta_subtitle: "انضم إلى آلاف الأطباء الذين يثقون في إيملي نوتس يومياً.",
+	cta_button: "ابدأ رحلتك مجاناً",
+	desc: "المنصة الرائدة في التقييم والتعليم الطبي في العالم العربي. نحن نعيد تشكيل مستقبل التطور المهني للأطباء عبر دمج أحدث تقنيات الذكاء الاصطناعي بالمنهجيات الطبية المعتمدة.",
+	platform: "المنصة",
+	platform_products: "منتجاتنا",
+	platform_ai: "الذكاء الاصطناعي",
+	platform_roadmap: "الرؤية المستقبلية",
+	legal: "قانوني",
+	legal_terms: "الشروط والأحكام",
+	legal_privacy: "سياسة الخصوصية",
+	legal_contact: "اتصل بنا",
+	newsletter: "النشرة الطبية",
+	newsletter_desc: "اشترك ليصلك آخر التحديثات والأخبار حول إيملي نوتس والإضافات التعليمية الجديدة.",
+	newsletter_placeholder: "البريد الإلكتروني",
+	newsletter_button: "اشترك",
+	copy: "إيملي نوتس (EMLE Notes). جميع الحقوق محفوظة.",
+	made_with_passion: "صُنع بشغف لتمكين الأطباء"
+};
+const locale_ar_46json_15d18f78 = {
+	common: common,
+	navbar: navbar,
+	hero: hero,
+	stats: stats,
+	problem: problem,
+	solution: solution,
+	products: products,
+	ai: ai,
+	business: business,
+	traction: traction,
+	roadmap: roadmap,
+	footer: footer
+};
+
+// @ts-nocheck
+const localeCodes =  [
+  "en",
+  "ar"
+];
+const localeLoaders = {
+  en: [
+    {
+      key: "locale_en_46json_03fc0917",
+      load: () => Promise.resolve(locale_en_46json_03fc0917),
+      cache: true
+    }
+  ],
+  ar: [
+    {
+      key: "locale_ar_46json_15d18f78",
+      load: () => Promise.resolve(locale_ar_46json_15d18f78),
+      cache: true
+    }
+  ]
+};
+const vueI18nConfigs = [];
+const normalizedLocales = [
+  {
+    code: "en",
+    language: "en-US",
+    dir: "ltr"
+  },
+  {
+    code: "ar",
+    language: "ar-EG",
+    dir: "rtl"
+  }
+];
+
+const setupVueI18nOptions = async (defaultLocale) => {
+  const options = await loadVueI18nOptions(vueI18nConfigs);
+  options.locale = defaultLocale || options.locale || "en-US";
+  options.defaultLocale = defaultLocale;
+  options.fallbackLocale ??= false;
+  options.messages ??= {};
+  for (const locale of localeCodes) {
+    options.messages[locale] ??= {};
+  }
+  return options;
+};
+
+function defineNitroPlugin(def) {
+  return def;
+}
+
+function defineRenderHandler(render) {
+  const runtimeConfig = useRuntimeConfig();
+  return eventHandler(async (event) => {
+    const nitroApp = useNitroApp();
+    const ctx = { event, render, response: void 0 };
+    await nitroApp.hooks.callHook("render:before", ctx);
+    if (!ctx.response) {
+      if (event.path === `${runtimeConfig.app.baseURL}favicon.ico`) {
+        setResponseHeader(event, "Content-Type", "image/x-icon");
+        return send(
+          event,
+          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        );
+      }
+      ctx.response = await ctx.render(event);
+      if (!ctx.response) {
+        const _currentStatus = getResponseStatus(event);
+        setResponseStatus(event, _currentStatus === 200 ? 500 : _currentStatus);
+        return send(
+          event,
+          "No response returned from render handler: " + event.path
+        );
+      }
+    }
+    await nitroApp.hooks.callHook("render:response", ctx.response, ctx);
+    if (ctx.response.headers) {
+      setResponseHeaders(event, ctx.response.headers);
+    }
+    if (ctx.response.statusCode || ctx.response.statusMessage) {
+      setResponseStatus(
+        event,
+        ctx.response.statusCode,
+        ctx.response.statusMessage
+      );
+    }
+    return ctx.response.body;
+  });
+}
+
+const scheduledTasks = false;
+
+const tasks = {
+  
+};
+
+const __runningTasks__ = {};
+async function runTask(name, {
+  payload = {},
+  context = {}
+} = {}) {
+  if (__runningTasks__[name]) {
+    return __runningTasks__[name];
+  }
+  if (!(name in tasks)) {
+    throw createError({
+      message: `Task \`${name}\` is not available!`,
+      statusCode: 404
+    });
+  }
+  if (!tasks[name].resolve) {
+    throw createError({
+      message: `Task \`${name}\` is not implemented!`,
+      statusCode: 501
+    });
+  }
+  const handler = await tasks[name].resolve();
+  const taskEvent = { name, payload, context };
+  __runningTasks__[name] = handler.run(taskEvent);
+  try {
+    const res = await __runningTasks__[name];
+    return res;
+  } finally {
+    delete __runningTasks__[name];
+  }
+}
+
+function buildAssetsDir() {
+	// TODO: support passing event to `useRuntimeConfig`
+	return useRuntimeConfig().app.buildAssetsDir;
+}
+function buildAssetsURL(...path) {
+	return joinRelativeURL(publicAssetsURL(), buildAssetsDir(), ...path);
+}
+function publicAssetsURL(...path) {
+	// TODO: support passing event to `useRuntimeConfig`
+	const app = useRuntimeConfig().app;
+	const publicBase = app.cdnURL || app.baseURL;
+	return path.length ? joinRelativeURL(publicBase, ...path) : publicBase;
+}
+
+function parseAcceptLanguage(value) {
+  return value.split(",").map((tag) => tag.split(";")[0]).filter(
+    (tag) => !(tag === "*" || tag === "")
+  );
+}
+function createPathIndexLanguageParser(index = 0) {
+  return (path) => {
+    const rawPath = typeof path === "string" ? path : path.pathname;
+    const normalizedPath = rawPath.split("?")[0];
+    const parts = normalizedPath.split("/");
+    if (parts[0] === "") {
+      parts.shift();
+    }
+    return parts.length > index ? parts[index] || "" : "";
+  };
+}
+
+function useRuntimeI18n(nuxtApp, event) {
+  {
+    return useRuntimeConfig(event).public.i18n;
+  }
+}
+function useI18nDetection(nuxtApp) {
+  const detectBrowserLanguage = useRuntimeI18n().detectBrowserLanguage;
+  const detect = detectBrowserLanguage || {};
+  return {
+    ...detect,
+    enabled: !!detectBrowserLanguage,
+    cookieKey: detect.cookieKey || "i18n_redirected"
+  };
+}
+function resolveRootRedirect(config) {
+  if (!config) {
+    return void 0;
+  }
+  return {
+    path: "/" + (isString(config) ? config : config.path).replace(/^\//, ""),
+    code: !isString(config) && config.statusCode || 302
+  };
+}
+function toArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+
+function createLocaleConfigs(fallbackLocale) {
+  const localeConfigs = {};
+  for (const locale of localeCodes) {
+    const fallbacks = getFallbackLocaleCodes(fallbackLocale, [locale]);
+    const cacheable = isLocaleWithFallbacksCacheable(locale, fallbacks);
+    localeConfigs[locale] = { fallbacks, cacheable };
+  }
+  return localeConfigs;
+}
+function getFallbackLocaleCodes(fallback, locales) {
+  if (fallback === false) {
+    return [];
+  }
+  if (isArray(fallback)) {
+    return fallback;
+  }
+  let fallbackLocales = [];
+  if (isString(fallback)) {
+    if (locales.every((locale) => locale !== fallback)) {
+      fallbackLocales.push(fallback);
+    }
+    return fallbackLocales;
+  }
+  const targets = [...locales, "default"];
+  for (const locale of targets) {
+    if (locale in fallback == false) {
+      continue;
+    }
+    fallbackLocales = [...fallbackLocales, ...fallback[locale].filter(Boolean)];
+  }
+  return fallbackLocales;
+}
+function isLocaleCacheable(locale) {
+  return localeLoaders[locale] != null && localeLoaders[locale].every((loader) => loader.cache !== false);
+}
+function isLocaleWithFallbacksCacheable(locale, fallbackLocales) {
+  return isLocaleCacheable(locale) && fallbackLocales.every((fallbackLocale) => isLocaleCacheable(fallbackLocale));
+}
+function getDefaultLocaleForDomain(host) {
+  return normalizedLocales.find((l) => !!l.defaultForDomains?.includes(host))?.code;
+}
+const isSupportedLocale = (locale) => localeCodes.includes(locale || "");
+
+function useI18nContext(event) {
+  if (event.context.nuxtI18n == null) {
+    throw new Error("Nuxt I18n server context has not been set up yet.");
+  }
+  return event.context.nuxtI18n;
+}
+function tryUseI18nContext(event) {
+  return event.context.nuxtI18n;
+}
+const getHost = (event) => getRequestURL(event, { xForwardedHost: true }).host;
+async function initializeI18nContext(event) {
+  const runtimeI18n = useRuntimeI18n(void 0, event);
+  const defaultLocale = runtimeI18n.defaultLocale || "";
+  const options = await setupVueI18nOptions(getDefaultLocaleForDomain(getHost(event)) || defaultLocale);
+  const localeConfigs = createLocaleConfigs(options.fallbackLocale);
+  const ctx = createI18nContext();
+  ctx.vueI18nOptions = options;
+  ctx.localeConfigs = localeConfigs;
+  event.context.nuxtI18n = ctx;
+  return ctx;
+}
+function createI18nContext() {
+  return {
+    messages: {},
+    slp: {},
+    localeConfigs: {},
+    trackMap: {},
+    vueI18nOptions: void 0,
+    trackKey(key, locale) {
+      this.trackMap[locale] ??= /* @__PURE__ */ new Set();
+      this.trackMap[locale].add(key);
+    }
+  };
+}
+
+function matchBrowserLocale(locales, browserLocales) {
+  const matchedLocales = [];
+  for (const [index, browserCode] of browserLocales.entries()) {
+    const matchedLocale = locales.find((l) => l.language?.toLowerCase() === browserCode.toLowerCase());
+    if (matchedLocale) {
+      matchedLocales.push({ code: matchedLocale.code, score: 1 - index / browserLocales.length });
+      break;
+    }
+  }
+  for (const [index, browserCode] of browserLocales.entries()) {
+    const languageCode = browserCode.split("-")[0].toLowerCase();
+    const matchedLocale = locales.find((l) => l.language?.split("-")[0].toLowerCase() === languageCode);
+    if (matchedLocale) {
+      matchedLocales.push({ code: matchedLocale.code, score: 0.999 - index / browserLocales.length });
+      break;
+    }
+  }
+  return matchedLocales;
+}
+function compareBrowserLocale(a, b) {
+  if (a.score === b.score) {
+    return b.code.length - a.code.length;
+  }
+  return b.score - a.score;
+}
+function findBrowserLocale(locales, browserLocales) {
+  const matchedLocales = matchBrowserLocale(
+    locales.map((l) => ({ code: l.code, language: l.language || l.code })),
+    browserLocales
+  );
+  return matchedLocales.sort(compareBrowserLocale).at(0)?.code ?? "";
+}
 
 const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"المنصة الرائدة في التعليم الطبي في العالم العربي. تعلم، تدرب، وقيم مستواك مع أقوى بنية تعليمية مدفوعة بالذكاء الاصطناعي."}],"link":[],"style":[],"script":[],"noscript":[],"htmlAttrs":{"dir":"rtl","lang":"ar"},"title":"إيملي نوتس - منصة التعليم الطبي الأسرع نموًا"};
 
@@ -2583,6 +3036,240 @@ const appTeleportTag = "div";
 const appTeleportAttrs = {"id":"teleports"};
 
 const appId = "nuxt-app";
+
+const separator = "___";
+const pathLanguageParser = createPathIndexLanguageParser(0);
+const getLocaleFromRoutePath = (path) => pathLanguageParser(path);
+const getLocaleFromRouteName = (name) => name.split(separator).at(1) ?? "";
+function normalizeInput(input) {
+  return typeof input !== "object" ? String(input) : String(input?.name || input?.path || "");
+}
+function getLocaleFromRoute(route) {
+  const input = normalizeInput(route);
+  return input[0] === "/" ? getLocaleFromRoutePath(input) : getLocaleFromRouteName(input);
+}
+
+function matchDomainLocale(locales, host, pathLocale) {
+  const normalizeDomain = (domain = "") => domain.replace(/https?:\/\//, "");
+  const matches = locales.filter(
+    (locale) => normalizeDomain(locale.domain) === host || toArray(locale.domains).includes(host)
+  );
+  if (matches.length <= 1) {
+    return matches[0]?.code;
+  }
+  return (
+    // match by current path locale
+    matches.find((l) => l.code === pathLocale)?.code || matches.find((l) => l.defaultForDomains?.includes(host) ?? l.domainDefault)?.code
+  );
+}
+
+const getCookieLocale = (event, cookieName) => (getCookie(event, cookieName)) || void 0;
+const getRouteLocale = (event, route) => getLocaleFromRoute(route);
+const getHeaderLocale = (event) => findBrowserLocale(normalizedLocales, parseAcceptLanguage(getRequestHeader(event, "accept-language") || ""));
+const getHostLocale = (event, path, domainLocales) => {
+  const host = getRequestURL(event, { xForwardedHost: true }).host;
+  const locales = normalizedLocales.map((l) => ({
+    ...l,
+    domain: domainLocales[l.code]?.domain ?? l.domain
+  }));
+  return matchDomainLocale(locales, host, getLocaleFromRoutePath(path));
+};
+const useDetectors = (event, config, nuxtApp) => {
+  if (!event) {
+    throw new Error("H3Event is required for server-side locale detection");
+  }
+  const runtimeI18n = useRuntimeI18n();
+  return {
+    cookie: () => getCookieLocale(event, config.cookieKey),
+    header: () => getHeaderLocale(event) ,
+    navigator: () => void 0,
+    host: (path) => getHostLocale(event, path, runtimeI18n.domainLocales),
+    route: (path) => getRouteLocale(event, path)
+  };
+};
+
+// Generated by @nuxtjs/i18n
+const pathToI18nConfig = {
+  "/": {
+    "en": "/",
+    "ar": "/"
+  }
+};
+const i18nPathToPath = {
+  "/": "/"
+};
+
+const formatTrailingSlash = withoutTrailingSlash;
+const matcher = createRouterMatcher([], {});
+for (const path of Object.keys(i18nPathToPath)) {
+  matcher.addRoute({ path, component: () => "", meta: {} });
+}
+const getI18nPathToI18nPath = (path, locale) => {
+  if (!path || !locale) {
+    return;
+  }
+  const plainPath = i18nPathToPath[path];
+  const i18nConfig = pathToI18nConfig[plainPath];
+  if (i18nConfig && i18nConfig[locale]) {
+    return i18nConfig[locale] === true ? plainPath : i18nConfig[locale];
+  }
+};
+function isExistingNuxtRoute(path) {
+  if (path === "") {
+    return;
+  }
+  if (path.endsWith("/__nuxt_error")) {
+    return;
+  }
+  const resolvedMatch = matcher.resolve({ path }, { path: "/", name: "", matched: [], params: {}, meta: {} });
+  return resolvedMatch.matched.length > 0 ? resolvedMatch : void 0;
+}
+function matchLocalized(path, locale, defaultLocale) {
+  if (path === "") {
+    return;
+  }
+  const parsed = parsePath(path);
+  const resolvedMatch = matcher.resolve(
+    { path: parsed.pathname || "/" },
+    { path: "/", name: "", matched: [], params: {}, meta: {} }
+  );
+  if (resolvedMatch.matched.length > 0) {
+    const alternate = getI18nPathToI18nPath(resolvedMatch.matched[0].path, locale);
+    const match = matcher.resolve(
+      { params: resolvedMatch.params },
+      { path: alternate || "/", name: "", matched: [], params: {}, meta: {} }
+    );
+    const isPrefixable = prefixable(locale, defaultLocale);
+    return formatTrailingSlash(withLeadingSlash(joinURL(isPrefixable ? locale : "", match.path)), true);
+  }
+}
+function prefixable(currentLocale, defaultLocale) {
+  return (currentLocale !== defaultLocale || "prefix_except_default" === "prefix");
+}
+
+function* detect(detectors, detection, path) {
+  if (detection.enabled) {
+    yield { locale: detectors.cookie(), source: "cookie" };
+    yield { locale: detectors.header(), source: "header" };
+  }
+  {
+    yield { locale: detectors.route(path), source: "route" };
+  }
+  yield { locale: detection.fallbackLocale, source: "fallback" };
+}
+function createRedirectResponse(event, dest, code) {
+  event.node.res.setHeader("location", dest);
+  event.node.res.statusCode = sanitizeStatusCode(code, event.node.res.statusCode);
+  return {
+    headers: event.node.res.getHeaders(),
+    statusCode: event.node.res.statusCode,
+    body: `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${dest.replace(/"/g, "%22")}"></head></html>`
+  };
+}
+const _8zoXWip5nkbMCHoEWo4bjrUpfhXetmOMJXXJmZRw6mQ = defineNitroPlugin(async (nitro) => {
+  const runtimeI18n = useRuntimeI18n();
+  const rootRedirect = resolveRootRedirect(runtimeI18n.rootRedirect);
+  runtimeI18n.defaultLocale || "";
+  try {
+    const cacheStorage = useStorage("cache");
+    const cachedKeys = await cacheStorage.getKeys("nitro:handlers:i18n");
+    await Promise.all(cachedKeys.map((key) => cacheStorage.removeItem(key)));
+  } catch {
+  }
+  const detection = useI18nDetection();
+  const cookieOptions = {
+    path: "/",
+    domain: detection.cookieDomain || void 0,
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+    secure: detection.cookieSecure
+  };
+  const createBaseUrlGetter = () => {
+    isFunction(runtimeI18n.baseUrl) ? "" : runtimeI18n.baseUrl || "";
+    if (isFunction(runtimeI18n.baseUrl)) {
+      console.warn("[nuxt-i18n] Configuring baseUrl as a function is deprecated and will be removed in v11.");
+      return () => "";
+    }
+    return (event, defaultLocale) => {
+      return "";
+    };
+  };
+  function resolveRedirectPath(event, path, pathLocale, defaultLocale, detector) {
+    let locale = "";
+    for (const detected of detect(detector, detection, event.path)) {
+      if (detected.locale && isSupportedLocale(detected.locale)) {
+        locale = detected.locale;
+        break;
+      }
+    }
+    locale ||= defaultLocale;
+    function getLocalizedMatch(locale2) {
+      const res = matchLocalized(path || "/", locale2, defaultLocale);
+      if (res && res !== event.path) {
+        return res;
+      }
+    }
+    let resolvedPath = void 0;
+    let redirectCode = 302;
+    const requestURL = getRequestURL(event);
+    if (rootRedirect && requestURL.pathname === "/") {
+      locale = detection.enabled && locale || defaultLocale;
+      resolvedPath = isSupportedLocale(detector.route(rootRedirect.path)) && rootRedirect.path || matchLocalized(rootRedirect.path, locale, defaultLocale);
+      redirectCode = rootRedirect.code;
+    } else if (runtimeI18n.redirectStatusCode) {
+      redirectCode = runtimeI18n.redirectStatusCode;
+    }
+    switch (detection.redirectOn) {
+      case "root":
+        if (requestURL.pathname !== "/") {
+          break;
+        }
+      // fallthrough (root has no prefix)
+      case "no prefix":
+        if (pathLocale) {
+          break;
+        }
+      // fallthrough to resolve
+      case "all":
+        resolvedPath ??= getLocalizedMatch(locale);
+        break;
+    }
+    if (requestURL.pathname === "/" && "prefix_except_default" === "prefix") ;
+    return { path: resolvedPath, code: redirectCode, locale };
+  }
+  const baseUrlGetter = createBaseUrlGetter();
+  nitro.hooks.hook("request", async (event) => {
+    await initializeI18nContext(event);
+  });
+  nitro.hooks.hook("render:before", async (context) => {
+    const { event } = context;
+    const ctx = useI18nContext(event);
+    const url = getRequestURL(event);
+    const detector = useDetectors(event, detection);
+    const localeSegment = detector.route(event.path);
+    const pathLocale = isSupportedLocale(localeSegment) && localeSegment || void 0;
+    const path = (pathLocale && url.pathname.slice(pathLocale.length + 1)) ?? url.pathname;
+    if (!url.pathname.includes("/_i18n/CGUc5axO") && !isExistingNuxtRoute(path)) {
+      return;
+    }
+    const resolved = resolveRedirectPath(event, path, pathLocale, ctx.vueI18nOptions.defaultLocale, detector);
+    if (resolved.path && resolved.path !== url.pathname) {
+      ctx.detectLocale = resolved.locale;
+      detection.useCookie && setCookie(event, detection.cookieKey, resolved.locale, cookieOptions);
+      context.response = createRedirectResponse(
+        event,
+        joinURL(baseUrlGetter(event, ctx.vueI18nOptions.defaultLocale), resolved.path + url.search),
+        resolved.code
+      );
+      return;
+    }
+  });
+  nitro.hooks.hook("render:html", (htmlContext, { event }) => {
+    tryUseI18nContext(event);
+  });
+});
+
+const rootDir = "C:/Users/user/Desktop/main-land/emle landing";
 
 const devReducers = {
 	VNode: (data) => isVNode(data) ? {
@@ -2678,6 +3365,7 @@ const _QTfggbbGcNCePFKaKDMoHJ3O_mX7v8BcDTt3_5bW0d4 = (function(nitro) {
 
 const plugins = [
   _Ebyv3lMdJyEwYe_VOMAj6E3q9iK9Tod8q4Gynh982OA,
+_8zoXWip5nkbMCHoEWo4bjrUpfhXetmOMJXXJmZRw6mQ,
 _JTltpMlzyB7R9tYQgDzNVSbbY6i6_iuoDCVfQyqQc2M,
 _QTfggbbGcNCePFKaKDMoHJ3O_mX7v8BcDTt3_5bW0d4,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
@@ -2831,20 +3519,6 @@ function setSSRError(ssrContext, error) {
 	ssrContext.error = true;
 	ssrContext.payload = { error };
 	ssrContext.url = error.url;
-}
-
-function buildAssetsDir() {
-	// TODO: support passing event to `useRuntimeConfig`
-	return useRuntimeConfig().app.buildAssetsDir;
-}
-function buildAssetsURL(...path) {
-	return joinRelativeURL(publicAssetsURL(), buildAssetsDir(), ...path);
-}
-function publicAssetsURL(...path) {
-	// TODO: support passing event to `useRuntimeConfig`
-	const app = useRuntimeConfig().app;
-	const publicBase = app.cdnURL || app.baseURL;
-	return path.length ? joinRelativeURL(publicBase, ...path) : publicBase;
 }
 
 const APP_ROOT_OPEN_TAG = `<${appRootTag}${propsToString(appRootAttrs)}>`;
@@ -3143,82 +3817,6 @@ async function getIslandContext(event) {
 	};
 }
 
-function defineRenderHandler(render) {
-  const runtimeConfig = useRuntimeConfig();
-  return eventHandler(async (event) => {
-    const nitroApp = useNitroApp();
-    const ctx = { event, render, response: void 0 };
-    await nitroApp.hooks.callHook("render:before", ctx);
-    if (!ctx.response) {
-      if (event.path === `${runtimeConfig.app.baseURL}favicon.ico`) {
-        setResponseHeader(event, "Content-Type", "image/x-icon");
-        return send(
-          event,
-          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-        );
-      }
-      ctx.response = await ctx.render(event);
-      if (!ctx.response) {
-        const _currentStatus = getResponseStatus(event);
-        setResponseStatus(event, _currentStatus === 200 ? 500 : _currentStatus);
-        return send(
-          event,
-          "No response returned from render handler: " + event.path
-        );
-      }
-    }
-    await nitroApp.hooks.callHook("render:response", ctx.response, ctx);
-    if (ctx.response.headers) {
-      setResponseHeaders(event, ctx.response.headers);
-    }
-    if (ctx.response.statusCode || ctx.response.statusMessage) {
-      setResponseStatus(
-        event,
-        ctx.response.statusCode,
-        ctx.response.statusMessage
-      );
-    }
-    return ctx.response.body;
-  });
-}
-
-const scheduledTasks = false;
-
-const tasks = {
-  
-};
-
-const __runningTasks__ = {};
-async function runTask(name, {
-  payload = {},
-  context = {}
-} = {}) {
-  if (__runningTasks__[name]) {
-    return __runningTasks__[name];
-  }
-  if (!(name in tasks)) {
-    throw createError({
-      message: `Task \`${name}\` is not available!`,
-      statusCode: 404
-    });
-  }
-  if (!tasks[name].resolve) {
-    throw createError({
-      message: `Task \`${name}\` is not implemented!`,
-      statusCode: 501
-    });
-  }
-  const handler = await tasks[name].resolve();
-  const taskEvent = { name, payload, context };
-  __runningTasks__[name] = handler.run(taskEvent);
-  try {
-    const res = await __runningTasks__[name];
-    return res;
-  } finally {
-    delete __runningTasks__[name];
-  }
-}
-
 const warnOnceSet = /* @__PURE__ */ new Set();
 const DEFAULT_ENDPOINT = "https://api.iconify.design";
 const _8pIou_ = defineCachedEventHandler(async (event) => {
@@ -3279,6 +3877,123 @@ const _8pIou_ = defineCachedEventHandler(async (event) => {
   // 1 week
 });
 
+const storage = prefixStorage(useStorage(), "i18n");
+function cachedFunctionI18n(fn, opts) {
+  opts = { maxAge: 1, ...opts };
+  const pending = {};
+  async function get(key, resolver) {
+    const isPending = pending[key];
+    if (!isPending) {
+      pending[key] = Promise.resolve(resolver());
+    }
+    try {
+      return await pending[key];
+    } finally {
+      delete pending[key];
+    }
+  }
+  return async (...args) => {
+    const key = [opts.name, opts.getKey(...args)].join(":").replace(/:\/$/, ":index");
+    const maxAge = opts.maxAge ?? 1;
+    const isCacheable = !opts.shouldBypassCache(...args) && maxAge >= 0;
+    const cache = isCacheable && await storage.getItemRaw(key);
+    if (!cache || cache.ttl < Date.now()) {
+      pending[key] = Promise.resolve(fn(...args));
+      const value = await get(key, () => fn(...args));
+      if (isCacheable) {
+        await storage.setItemRaw(key, { ttl: Date.now() + maxAge * 1e3, value, mtime: Date.now() });
+      }
+      return value;
+    }
+    return cache.value;
+  };
+}
+
+const _getMessages = async (locale) => {
+  return { [locale]: await getLocaleMessagesMerged(locale, localeLoaders[locale]) };
+};
+cachedFunctionI18n(_getMessages, {
+  name: "messages",
+  maxAge: -1 ,
+  getKey: (locale) => locale,
+  shouldBypassCache: (locale) => !isLocaleCacheable(locale)
+});
+const getMessages = _getMessages ;
+const _getMergedMessages = async (locale, fallbackLocales) => {
+  const merged = {};
+  try {
+    if (fallbackLocales.length > 0) {
+      const messages = await Promise.all(fallbackLocales.map(getMessages));
+      for (const message2 of messages) {
+        deepCopy(message2, merged);
+      }
+    }
+    const message = await getMessages(locale);
+    deepCopy(message, merged);
+    return merged;
+  } catch (e) {
+    throw new Error("Failed to merge messages: " + e.message);
+  }
+};
+const getMergedMessages = cachedFunctionI18n(_getMergedMessages, {
+  name: "merged-single",
+  maxAge: -1 ,
+  getKey: (locale, fallbackLocales) => `${locale}-[${[...new Set(fallbackLocales)].sort().join("-")}]`,
+  shouldBypassCache: (locale, fallbackLocales) => !isLocaleWithFallbacksCacheable(locale, fallbackLocales)
+});
+const _getAllMergedMessages = async (locales) => {
+  const merged = {};
+  try {
+    const messages = await Promise.all(locales.map(getMessages));
+    for (const message of messages) {
+      deepCopy(message, merged);
+    }
+    return merged;
+  } catch (e) {
+    throw new Error("Failed to merge messages: " + e.message);
+  }
+};
+cachedFunctionI18n(_getAllMergedMessages, {
+  name: "merged-all",
+  maxAge: -1 ,
+  getKey: (locales) => locales.join("-"),
+  shouldBypassCache: (locales) => !locales.every((locale) => isLocaleCacheable(locale))
+});
+
+const _messagesHandler = defineEventHandler(async (event) => {
+  const locale = getRouterParam(event, "locale");
+  if (!locale) {
+    throw createError({ status: 400, message: "Locale not specified." });
+  }
+  const ctx = useI18nContext(event);
+  if (ctx.localeConfigs && locale in ctx.localeConfigs === false) {
+    throw createError({ status: 404, message: `Locale '${locale}' not found.` });
+  }
+  const messages = await getMergedMessages(locale, ctx.localeConfigs?.[locale]?.fallbacks ?? []);
+  deepCopy(messages, ctx.messages);
+  return ctx.messages;
+});
+const _cachedMessageLoader = defineCachedFunction(_messagesHandler, {
+  name: "i18n:messages-internal",
+  maxAge: -1 ,
+  getKey: (event) => [getRouterParam(event, "locale") ?? "null", getRouterParam(event, "hash") ?? "null"].join("-"),
+  async shouldBypassCache(event) {
+    const locale = getRouterParam(event, "locale");
+    if (locale == null) {
+      return false;
+    }
+    const ctx = tryUseI18nContext(event) || await initializeI18nContext(event);
+    return !ctx.localeConfigs?.[locale]?.cacheable;
+  }
+});
+defineCachedEventHandler(_cachedMessageLoader, {
+  name: "i18n:messages",
+  maxAge: -1 ,
+  swr: false,
+  getKey: (event) => [getRouterParam(event, "locale") ?? "null", getRouterParam(event, "hash") ?? "null"].join("-")
+});
+const _R4uEo0 = _messagesHandler ;
+
 const _lazy_yyasKn = () => Promise.resolve().then(function () { return renderer; });
 
 const handlers = [
@@ -3286,6 +4001,7 @@ const handlers = [
   { route: '/__nuxt_error', handler: _lazy_yyasKn, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: handler$1, lazy: false, middleware: false, method: undefined },
   { route: '/api/_nuxt_icon/:collection', handler: _8pIou_, lazy: false, middleware: false, method: undefined },
+  { route: '/_i18n/:hash/:locale/messages.json', handler: _R4uEo0, lazy: false, middleware: false, method: undefined },
   { route: '/**', handler: _lazy_yyasKn, lazy: true, middleware: false, method: undefined }
 ];
 

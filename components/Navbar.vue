@@ -51,38 +51,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 
 const { locale, setLocale } = useI18n()
+const colorMode = useColorMode()
 
 // --- Theme ---
-const currentTheme = ref('light')
-
-onMounted(() => {
-  // Read the actual theme from the DOM (set by Nuxt color-mode module)
-  currentTheme.value = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+// Determine current theme reactively
+const currentTheme = computed(() => {
+  return colorMode.value === 'dark' ? 'dark' : 'light'
 })
 
 function toggleTheme() {
-  const colorMode = useColorMode()
+  // Update preference correctly; useColorMode is already initialized globally
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-  currentTheme.value = colorMode.preference
 }
 
 // --- Language ---
-const langLabel = ref('EN')
-
-onMounted(() => {
-  langLabel.value = locale.value === 'ar' ? 'EN' : 'AR'
+const langLabel = computed(() => {
+  return locale.value === 'ar' ? 'EN' : 'AR'
 })
 
 function toggleLang() {
-  if (locale.value === 'ar') {
-    // Arabic is default (no prefix), English gets /en/
-    window.location.href = '/en/'
-  } else {
-    // Go back to default (Arabic) at root
-    window.location.href = '/'
-  }
+  // Use setLocale for smooth client-side routing instead of hard reload
+  const nextLang = locale.value === 'ar' ? 'en' : 'ar'
+  setLocale(nextLang)
 }
 </script>
